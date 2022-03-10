@@ -19,6 +19,9 @@ void finalizarprocesos();
 void creasemaforos();
 void ctrlc(int);
 
+pid_t pids_clientes[NUM_CLIENTES];
+pid_t pids_barberos[NUM_BARBEROS];
+
 int i;
 
 int main(int argc, char *argv[]){
@@ -40,14 +43,24 @@ int main(int argc, char *argv[]){
 void ctrlc(int senial) {
     finalizarprocesos(); 
     liberarsemaforos();
-    printf ("\nFin del programa (Ctrol + C).\n\n Los barberos terminan su jornada y se van a casa.\n"); 
+    printf ("\nFin del programa (Ctrol + C).\n\n Todos los barberos han terminado su jornada. La barberia esta cerrada.\n"); 
     exit(EXIT_SUCCESS);
 }
 
 void liberarsemaforos(){
-  for(i= 0; i < NUM_BARBEROS; i++)
+  for(i= 0; i < NUM_BARBEROS; i++){
+    destruir_sem(semBarberos[i]);
+    printf("El barbero %d se marcha a casa.",i);
+  }
+
+  destruir_var()
 }
 
 int creasemaforos(){
+  char[1024] barbero;
+  for(i=0; i < NUM_BARBEROS; i++){
+    fprintf(barbero,"barbero_[%d]",i);
+    crear_sem(barbero, 1);
 
+  }
 }
