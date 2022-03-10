@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/69/trunk/concurrent_programming/filosofos/src
+END
+filosofo.c
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/66/trunk/concurrent_programming/filosofos/src/filosofo.c
+END
+memoriaI.c
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/66/trunk/concurrent_programming/filosofos/src/memoriaI.c
+END
+semaforoI.c
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/67/trunk/concurrent_programming/filosofos/src/semaforoI.c
+END
+manager.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/69/trunk/concurrent_programming/filosofos/src/manager.c
+END

@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/wait.h>
+
+#include <memoriaI.h>
+#include <semaforoI.h>
+#include <global.h>
+
+char *semaforos[FILOSOFOS];
+
+void esperar (int senhal);
+void controlador (int senhal);
+
+int main (int argc, char *argv[]) {
+  int pid_hijo;
+  int i;
+  char *sem_str;
+
+  srand((int)getpid());
+
+  // Creación de los semáforos (uno por palillo)...
+  for (i = 0; i < FILOSOFOS; i++) {
+    sem_str = (char*)malloc(1);
+    sprintf(sem_str, "%d", i);
+
+    crear_sem(sem_str, 1);
+    semaforos[i] = sem_str;
+  }
+
+  // Se lanzan los filósofos...
+  for (i = 0; i < FILOSOFOS; i++)
+    switch (pid_hijo = fork()) {
+    case 0:
+      // Cada filósofo recibe los nombres de los semáforos
+      // que representan a sus palillos adyacentes.
+      execl("./exec/filosofo", "filosofo", semaforos[i], semaforos[(i + 1)% FILOSOFOS], NULL);
+      break;
+    }
+
+  // Se espera la terminación de los procesos...
+  if (signal(SIGCHLD, esperar) == SIG_ERR) {
+    fprintf(stderr, "No se esperó a un proceso.\n");
+    exit(1);
+  }
+
+  // Manejo de Ctrol+C.
+  if (signal(SIGINT, controlador) == SIG_ERR) {
+    fprintf(stderr, "Terminación incorrecta.\n");
+    exit(1);
+  }
+
+  while(1) // Bucle infinito de espera.
+    pause(); // A la espera de Ctrol+C.
+
+  return 0;
+}
+
+void esperar (int senhal) {
+  int i;
+  while (wait3(&i, WNOHANG, NULL) > 0);
+}
+
+void controlador (int senhal) {
+  int i;
+  printf("\nCtrl+c capturada.\n");
+  printf("Finalizando...\n\n");
+
+  // Destrucción de semáforos.
+  for (i = 0; i < FILOSOFOS; i++) {
+    destruir_sem(semaforos[i]);
+    free(semaforos[i]);
+  }
+
+  sleep(1);
+  printf("OK!\n");
+  // Salida del programa.
+  exit(0);
+}

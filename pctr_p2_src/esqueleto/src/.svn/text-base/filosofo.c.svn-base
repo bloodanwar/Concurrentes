@@ -1,0 +1,52 @@
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <semaforoI.h>
+#include <memoriaI.h>
+#include <global.h>
+
+void filosofo ();
+
+int main (int argc, char *argv[]) {
+  filosofo(argv[1], argv[2]);
+
+  return 0;
+}
+
+void comer ();
+void pensar ();
+
+void filosofo (char *sem_1, char *sem_2) {
+  srand((int)getpid());
+
+  // Obtiene el puntero a los semáforos
+  // que representan los palillos adyacentes.
+  sem_t *sem_izq = get_sem(sem_1);
+  sem_t *sem_der = get_sem(sem_2);
+  
+  while (1) {
+    // Intenta coger los palillos...
+    wait_sem(sem_izq);
+    wait_sem(sem_der);
+
+    comer();
+
+    // Deja los palillos.
+    signal_sem(sem_izq);
+    signal_sem(sem_der);
+
+    pensar();
+  }
+}
+
+void comer () {
+  printf("%d comiendo...\n", getpid());
+  sleep(rand() % MAX_TIME_COMER);
+}
+
+void pensar () {
+  printf("%d pensando...\n", getpid());
+  sleep(rand() % MAX_TIME_PENSAR);
+}

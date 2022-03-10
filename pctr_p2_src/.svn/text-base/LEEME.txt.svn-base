@@ -1,0 +1,46 @@
+PROBLEMA DE LOS FILÓSOFOS COMENSALES
+(DINING PHILOSOPHERS PROBLEM)
+------------------------------------
+
+Los filósofos se encuentran comiendo o pensando. Todos comparten una
+mesa redonda con cinco sillas, una para cada filósofo. En el centro de
+la mesa hay una fuente de arroz y en la mesa sólo hay cinco palillos,
+de manera que cada filósofo tiene un palillo a su izquierda y otro a
+su derecha.
+
+Cuando un filósofo piensa, entonces se abstrae del mundo y no se
+relaciona con ningún otro filósofo. Cuando tiene hambre, entonces
+intenta acceder a los palillos que tiene a su izquierda y a su derecha
+(necesita ambos). Naturalmente, un filósofo no puede quitarle un
+palillo a otro filósofo y sólo puede comer cuando ha cogido los dos
+palillos. Cuando un filósofo termina de comer, deja los palillos y se
+pone a pensar.
+
+SOLUCIÓN (CON POSIBLE INTERBLOQUEO)
+-----------------------------------
+
+Este problema es uno de los clásicos de sincronización entre
+procesos. La solución planteada se basa en representar cada palillo
+con un semáforo inicializado a 1. Ésta garantiza que dos filósofos que
+se sienten juntos nunca coman al mismo tiempo, pero se puede producir
+un interbloqueo si, por ejemplo, todos los filósofos toman el palillo
+que tienen a su izquierda.
+
+La implementación hace uso del TAD semáforo, implementado con las
+primitivas de POSIX. La solución es general para n filósofos.
+
+* En include/global.h se puede ajustar el número de filósofos, el
+  tiempo máximo dedicado a comer y el tiempo máximo dedicado a pensar.
+
+En manager.c se incluye el código necesario para lanzar los filósofos
+y gestionar de manera adecuada la finalización de los mismos.
+
+COMPILACIÓN
+-----------
+
+$ make (desde el directorio raíz)
+
+EJECUCIÓN
+---------
+
+$ ./exec/manager
