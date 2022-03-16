@@ -14,6 +14,24 @@
 #define NUM_BARBEROS 3
 #define TIEMPO_CORTE_BASE 2 //Tiempo que se tarda en cortar el pelo. 
 
+
+
+
+/*
+  Hay N sillas (sala de espera) y M clientes de pie
+  Los clientes que no quepan se van directamente.
+
+  Hay 3 sillones para cortar el pelo y 3 barberos para cortar el pelo.
+  Hay 3 velocidades de barbero.
+
+  Solo se puede sentar en un sillon un cliente que este en una silla.
+
+*/
+
+
+
+
+
 void liberarsemaforos(); 
 void finalizarprocesos();
 void creasemaforos();

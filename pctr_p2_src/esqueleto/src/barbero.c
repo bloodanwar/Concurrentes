@@ -27,5 +27,8 @@
 
 int main(int argc, char *argv[]){
 
+    // Uno de los argumentos a recibir al crear el barbero tiene que ser su velocidad.
+    // el barbero es el que tiene que hacer el deposito en la caja antes de dormirse.
+
     return EXIT_SUCCESS;
 }
