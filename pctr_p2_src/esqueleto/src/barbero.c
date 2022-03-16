@@ -21,7 +21,14 @@
     El barbero agradece la propina (D es precio de corte, si recibimos D+P de pago, le restamos D y tenemos un P que imprimir por pantalla como propina.)
     el barbero se duerme
     back to the top
-
+    while(1){
+        wait(barbero);
+        cortar();
+        wait(caja);
+        operaciones//variables;
+        signal(caja);
+        signal(fin);
+    }
 
 */
 
