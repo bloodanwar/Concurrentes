@@ -26,7 +26,6 @@ int main(int argc, char *argv[]){
         wait(fin);
     signal(sillón);
 
-    tenenmios que hacer cosas
 
     */
 
