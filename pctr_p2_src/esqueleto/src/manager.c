@@ -25,6 +25,10 @@
   Hay 3 velocidades de barbero.
 
   Solo se puede sentar en un sillon un cliente que este en una silla.
+  -----------------------------------------------------------------------------------------
+  cuando matas al proceso padre, gestionar la eliminacion de los procesos hijos
+asignarle a un cliente, un barbero desde el principio
+pasar por linea de argumentos (al barbero), la velocidad del barbero
 
 */
 
@@ -37,13 +41,23 @@ void finalizarprocesos();
 void creasemaforos();
 void ctrlc(int);
 
+  int i;
+
 pid_t pids_clientes[NUM_CLIENTES];
-pid_t pids_barberos[NUM_BARBEROS];
+pid_t pids_barberos[NUM_BARBEROS];  
 
-int i;
-
-int main(int argc, char *argv[]){
-
+int main(int argc, char *argv[]){ 
+  srand(((int)getpid()));
+   srand(((int)getpid()));
+  for(i=0; i<NUM_BARBEROS; i++){
+    switch(pids_barbero[i]=fork()){
+      case 0: 
+      execl("./exe/barbero", "barbero", i, TIEMPO_CORTE_BASE);
+      break;
+      for(i=0; i<NUM_BARBERO; )
+    }
+  }
+  
 1
   if (creasemaforos()!=0){
     fprintf(stderr,"Error en la creacion de los semaforos.");
