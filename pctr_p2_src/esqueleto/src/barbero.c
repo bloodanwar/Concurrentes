@@ -37,15 +37,13 @@ int main(int argc, char *argv[]){
     // Uno de los argumentos a recibir al crear el barbero tiene que ser su velocidad.
     // el barbero es el que tiene que hacer el deposito en la caja antes de dormirse.
 
-
-    int idbarbero = atoi(argv[1])+1;
+    int idbarbero = atoi(argv[1]);
     int velocidad_Base = atoi(argv[2]);
-
-    int mi_velocidad=(idbarbero)*velocidad_Base;
+    int mi_velocidad=(idbarbero+1)*velocidad_Base;
 
     printf("Soy el barbero %d y empiezo a cortar el pelo.\n",idbarbero);
     sleep(mi_velocidad); //Esto es "Cortar el pelo"
-    printf("Soy el barbero %d y he terminado de cortar el pelo. He tardado %d sesundos\n",idbarbero,mi_velocidad);
+    printf("Soy el barbero %d y he terminado de cortar el pelo. He tardado %d segundos\n",idbarbero,mi_velocidad);
 
 
 

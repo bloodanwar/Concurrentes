@@ -5,14 +5,14 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <unistd.h>
-
+/*
 #include <semaforoI.h>
 #include <memoriaI.h>
-
+*/
 
 #define NUM_CLIENTES 100
 #define NUM_BARBEROS 3
-#define TIEMPO_CORTE_BASE 2 //Tiempo que se tarda en cortar el pelo. 
+//#define TIEMPO_CORTE_BASE 3 //Tiempo que se tarda en cortar el pelo. 
 
 
 
@@ -41,24 +41,33 @@ void finalizarprocesos();
 void creasemaforos();
 void ctrlc(int);
 
-  int i;
+int i;
+char idBarb[1024];
+char TIEMPO_CORTE_BASE[1024]="2";
 
 pid_t pids_clientes[NUM_CLIENTES];
 pid_t pids_barberos[NUM_BARBEROS];  
 
-int main(int argc, char *argv[]){ 
-  srand(((int)getpid()));
-   srand(((int)getpid()));
-  for(i=0; i<NUM_BARBEROS; i++){
-    switch(pids_barbero[i]=fork()){
+int main(int argc, char *argv[]){
+  for(i=0; i<NUM_BARBEROS; ++i){
+    switch(pids_barberos[i]=fork()){
       case 0: 
-      execl("./exe/barbero", "barbero", i, TIEMPO_CORTE_BASE);
-      break;
-      for(i=0; i<NUM_BARBERO; )
+        sprintf(idBarb,"%d",i);
+        execl("./barbero", "./barbero",idBarb,TIEMPO_CORTE_BASE, NULL);
+        fprintf(stderr,"No se esta ejecutando el execl\n");
+        return EXIT_FAILURE;
+
+      case -1:
+        fprintf(stderr,"Error en la creacion del barbero.\n");
+        return EXIT_FAILURE;
+      
+      default:
+        continue;
     }
   }
+}
   
-1
+/*
   if (creasemaforos()!=0){
     fprintf(stderr,"Error en la creacion de los semaforos.");
     return EXIT_FAILURE;
@@ -95,4 +104,4 @@ int creasemaforos(){
     crear_sem(barbero, 1);
 
   }
-}
+}*/
