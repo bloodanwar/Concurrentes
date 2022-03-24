@@ -144,4 +144,6 @@ void liberaRecursos(){
   destruir_sem("GenteDentro");
 
   destruir_var()
+
+  //matar clientes y matar barberos
 }
