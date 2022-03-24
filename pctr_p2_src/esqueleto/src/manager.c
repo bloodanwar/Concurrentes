@@ -52,6 +52,8 @@ pid_t pids_barberos[NUM_BARBEROS];
 
 int main(int argc, char *argv[]){
 
+  srand(((int)getpid()));
+
   //Ejecucion de todos los procesos barberos.
 
   for(i=0; i<NUM_BARBEROS; ++i){
