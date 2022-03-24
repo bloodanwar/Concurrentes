@@ -12,9 +12,10 @@
 
 #define NUM_CLIENTES 100
 #define NUM_BARBEROS 3
-#define NUM_BUTACAS 3
+#define NUM_SILLONES 3
+#define NUM_SILLAS 10
+
 #define TIEMPO_CORTE_BASE "3" //Tiempo que se tarda en cortar el pelo. 
-#define SILLAS 10
 #define AFORO_MAX "20"
 
 
@@ -75,7 +76,7 @@ int main(int argc, char *argv[]){
     for(i=0; i <NUM_CLIENTES; i++){
       switch (pids_clientes[i]=fork()){
       case 0:
-        execl("./cliente","./cliente",AFORO_MAX,NULL)
+        execl("./cliente","./cliente",AFORO_MAX,,NULL)
         break;
       
       default:
@@ -109,23 +110,24 @@ void ctrlc(int senial) {
 int creaRecursos(){
   //Crear todos los semaforos 
   char[1024] barbero;
-  char[1024] butaca;
+  char[1024] pago;
+
   for(i=0; i < NUM_BARBEROS; i++){
     sprintf(barbero,"barbero_[%d]",i);
-    crear_sem(barbero, 1);
+    sprintf(pago,"pago_barbero[%d]",i);
+  
+    crear_sem(barbero, 0);
+    crear_sem(pago,1)
   }
-  for(i=0; i < NUM_BUTACAS; i++){
-    sprintf(butaca,"butaca_[%d]",i);
-    crear_sem(butaca,0);
-  }
-  crear_sem("Mutex_Caja",1)
-  crear_sem("Mutex_Puerta",1)
-  crear_sem("Mutex_Sillas",1)
+  crear_sem("Sillones",NUM_SILLONES);
+  crear_sem("Mutex_Caja",1);
+  crear_sem("Mutex_Puerta",1);
+  crear_sem("Sillas",NUM_SILLAS);
 
   //Crear las variables
 
   crear_var("Aforo_Actual",0)
-  crear_var("Sillas_Usadas",0)
+
 
 }
 
@@ -135,7 +137,7 @@ void liberaRecursos(){
     destruir_sem(semBarberos[i]);
     printf("El barbero %d se marcha a casa.",i);
   }
-  for(i=0; i < NUM_BUTACAS; i++){
+  for(i=0; i < NUM_SILLONES; i++){
     sprintf(butaca,"butaca_[%d]",i);
     destruir_sem(butaca,0);
   }

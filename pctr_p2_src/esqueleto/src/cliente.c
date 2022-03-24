@@ -12,11 +12,16 @@
 int Aforo_Actual;
 int Aforo_Max;
 int Sillas_Usadas;
+int barberoAsignado;
+int coste_corte;
 
 int main(int argc, char *argv[]){
 
-    Aforo_Max = atoi(argv[1]);
-    coste_corte = atoi(argv[2])
+    barberoAsignado=atoi(argv[1]);
+    Aforo_Max = atoi(argv[2]);
+    coste_corte = atoi(argv[3]);
+
+    
 
     /*
 
@@ -54,30 +59,35 @@ int main(int argc, char *argv[]){
 
         wait_sem(get_sem("Contador_Sillas"));
             //Se sienta una persona que estaba de pie en una silla
-            wait(get_sem("Contador_Sillones"));
+
+            wait(get_sem("Sillones"));
+
             //Se pasa una persona de la silla al sillon
             signal_sem(get_sem("Contador_Sillas"));
+
                 //Se queda un hueco para estar de pie
                 wait_sem(get_sem("Mutex_Puerta"));
                 consultar_var(obtener_var("Aforo_Actual"));
-                Aforo_Actual--;
-                modificar_var(obtener_var("Aforo_Actual"), Aforo_Actual);
+                modificar_var(obtener_var("Aforo_Actual"), Aforo_Actual--);
                 signal_sem(get_sem("Mutex_Puerta"));
 
+                //Una vez se sienta en el sillon, el cliente espera a que termine su barbero
+
+                wait_sem(get_sem(fin))
                 /*
                 
                     wait(sillones)
                     for i in sillones{
-                        if  barberos[i] == true {
-                            barberos [i] = false;
+                        if  barb= false;
                             signal barbero_[i]
                             wait (fin_corte pelo)
-                            
+                            eros[i] == true {
+                            barberos [i] 
                                             
                                     (modificar variable (pagar_barb_[i], pago)       
                                     pagar.exe)
-                            barberos [i] = true;
-                        }
+                                barberos [i] = true;
+                            }
                     }
                 
                 */

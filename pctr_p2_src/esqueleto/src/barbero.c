@@ -44,6 +44,9 @@ int main(int argc, char *argv[]){
 
     sprintf(barbero,"barbero_[%d]",idbarbero);
 
+
+    while(1){
+        
     wait_sem(get_sem(barbero));
 
     printf("Soy el barbero %d y empiezo a cortar el pelo.\n",idbarbero);
@@ -56,6 +59,6 @@ int main(int argc, char *argv[]){
     
     */
 
-
+}
     return EXIT_SUCCESS;
 }
