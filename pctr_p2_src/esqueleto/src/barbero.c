@@ -31,18 +31,23 @@
     }
 
 */
+
 char[1024] barbero;
+char[1024] pago;
+char[1024] fin;
+
 
 int main(int argc, char *argv[]){
 
     // Uno de los argumentos a recibir al crear el barbero tiene que ser su velocidad.
     // el barbero es el que tiene que hacer el deposito en la caja antes de dormirse.
 
-    int idbarbero = atoi(argv[1]);
     int velocidad_Base = atoi(argv[2]);
     int mi_velocidad=(idbarbero+1)*velocidad_Base;
 
-    sprintf(barbero,"barbero_[%d]",idbarbero);
+    sprintf(barbero,"Barbero_[%d]",atoi(argv[1]));
+    sprintf(pago,"Pago[%d]",atoi(argv[1]));
+    sprintf(pago,"Fin[%d]",atoi(argv[1]));
 
 
     while(1){
@@ -53,11 +58,13 @@ int main(int argc, char *argv[]){
     sleep(mi_velocidad); //Esto es "Cortar el pelo"
     printf("Soy el barbero %d y he terminado de cortar el pelo. He tardado %d segundos\n",idbarbero,mi_velocidad);
 
-    /*
-    
-    signal (fin corte pelo)
-    
-    */
+    signal_sem(get_sem(fin));
+
+    wait_sem(get_sem(pago))
+
+    wait_sem(get_sem("Mutex_Caja"));
+
+    consultar_var(obtener_var("Aforo_Actual"));
 
 }
     return EXIT_SUCCESS;

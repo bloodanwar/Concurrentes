@@ -14,6 +14,7 @@
 #define NUM_BARBEROS 3
 #define NUM_SILLONES 3
 #define NUM_SILLAS 10
+#define COSTE_CORTE 10
 
 #define TIEMPO_CORTE_BASE "3" //Tiempo que se tarda en cortar el pelo. 
 #define AFORO_MAX "20"
@@ -76,7 +77,7 @@ int main(int argc, char *argv[]){
     for(i=0; i <NUM_CLIENTES; i++){
       switch (pids_clientes[i]=fork()){
       case 0:
-        execl("./cliente","./cliente",AFORO_MAX,,NULL)
+        execl("./cliente","./cliente",AFORO_MAX,COSTE_CORTE,NULL)
         break;
       
       default:
@@ -111,18 +112,23 @@ int creaRecursos(){
   //Crear todos los semaforos 
   char[1024] barbero;
   char[1024] pago;
+  char[1024] fin;
 
   for(i=0; i < NUM_BARBEROS; i++){
-    sprintf(barbero,"barbero_[%d]",i);
-    sprintf(pago,"pago_barbero[%d]",i);
+    sprintf(barbero,"Barbero_[%d]",i);
+    sprintf(pago,"Pago[%d]",i);
+    sprintf(pago,"Fin[%d]",i);
   
     crear_sem(barbero, 0);
-    crear_sem(pago,1)
+    crear_sem(pago,1);
+    crear_sem(fin,1);
   }
   crear_sem("Sillones",NUM_SILLONES);
+  crear_sem("Sillas",NUM_SILLAS);
+  
   crear_sem("Mutex_Caja",1);
   crear_sem("Mutex_Puerta",1);
-  crear_sem("Sillas",NUM_SILLAS);
+  
 
   //Crear las variables
 

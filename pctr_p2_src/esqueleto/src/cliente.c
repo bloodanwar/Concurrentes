@@ -11,17 +11,19 @@
 
 int Aforo_Actual;
 int Aforo_Max;
-int Sillas_Usadas;
-int barberoAsignado;
 int coste_corte;
+
+char barberoAsignado;
+char fin;
 
 int main(int argc, char *argv[]){
 
-    barberoAsignado=atoi(argv[1]);
+    sprintf(barberoAsignado, "Barbero_[%d]", atoi(argv[1]));
+    sprintf(fin, "Fin_[%d]", atoi(argv[1]));
+
     Aforo_Max = atoi(argv[2]);
     coste_corte = atoi(argv[3]);
 
-    
 
     /*
 
@@ -72,8 +74,9 @@ int main(int argc, char *argv[]){
                 signal_sem(get_sem("Mutex_Puerta"));
 
                 //Una vez se sienta en el sillon, el cliente espera a que termine su barbero
-
+                
                 wait_sem(get_sem(fin))
+                
                 /*
                 
                     wait(sillones)
