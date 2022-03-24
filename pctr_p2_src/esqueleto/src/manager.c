@@ -5,17 +5,17 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <unistd.h>
-/*
+
 #include <semaforoI.h>
 #include <memoriaI.h>
-*/
+
 
 #define NUM_CLIENTES 100
 #define NUM_BARBEROS 3
 #define NUM_BUTACAS 3
 #define TIEMPO_CORTE_BASE "3" //Tiempo que se tarda en cortar el pelo. 
 #define SILLAS 10
-#define AFORO_MAX 20
+#define AFORO_MAX "20"
 
 
 
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]){
     for(i=0; i <NUM_CLIENTES; i++){
       switch (pids_clientes[i]=fork()){
       case 0:
-        execl("./cliente","./cliente",)
+        execl("./cliente","./cliente",AFORO_MAX,NULL)
         break;
       
       default:
@@ -120,11 +120,12 @@ int creaRecursos(){
   }
   crear_sem("Mutex_Caja",1)
   crear_sem("Mutex_Puerta",1)
-  crear_sem("GenteDentro",20)
+  crear_sem("Mutex_Sillas",1)
 
   //Crear las variables
 
   crear_var("Aforo_Actual",0)
+  crear_var("Sillas_Usadas",0)
 
 }
 

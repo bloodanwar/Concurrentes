@@ -50,6 +50,11 @@ int main(int argc, char *argv[]){
     sleep(mi_velocidad); //Esto es "Cortar el pelo"
     printf("Soy el barbero %d y he terminado de cortar el pelo. He tardado %d segundos\n",idbarbero,mi_velocidad);
 
+    /*
+    
+    signal (fin corte pelo)
+    
+    */
 
 
     return EXIT_SUCCESS;
