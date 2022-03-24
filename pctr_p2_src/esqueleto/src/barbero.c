@@ -31,6 +31,7 @@
     }
 
 */
+char[1024] barbero;
 
 int main(int argc, char *argv[]){
 
@@ -40,6 +41,10 @@ int main(int argc, char *argv[]){
     int idbarbero = atoi(argv[1]);
     int velocidad_Base = atoi(argv[2]);
     int mi_velocidad=(idbarbero+1)*velocidad_Base;
+
+    sprintf(barbero,"barbero_[%d]",idbarbero);
+
+    wait_sem(get_sem(barbero));
 
     printf("Soy el barbero %d y empiezo a cortar el pelo.\n",idbarbero);
     sleep(mi_velocidad); //Esto es "Cortar el pelo"

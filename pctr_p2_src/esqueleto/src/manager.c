@@ -12,8 +12,10 @@
 
 #define NUM_CLIENTES 100
 #define NUM_BARBEROS 3
-//#define TIEMPO_CORTE_BASE 3 //Tiempo que se tarda en cortar el pelo. 
-
+#define NUM_BUTACAS 3
+#define TIEMPO_CORTE_BASE "3" //Tiempo que se tarda en cortar el pelo. 
+#define SILLAS 10
+#define AFORO_MAX 20
 
 
 
@@ -36,19 +38,22 @@ pasar por linea de argumentos (al barbero), la velocidad del barbero
 
 
 
-void liberarsemaforos(); 
+void liberaRecursos(); 
 void finalizarprocesos();
-void creasemaforos();
+void creaRecursos();
 void ctrlc(int);
 
 int i;
 char idBarb[1024];
-char TIEMPO_CORTE_BASE[1024]="2";
+char aforoMaximo[1024]=AFORO_MAX;
 
 pid_t pids_clientes[NUM_CLIENTES];
 pid_t pids_barberos[NUM_BARBEROS];  
 
 int main(int argc, char *argv[]){
+
+  //Ejecucion de todos los procesos barberos.
+
   for(i=0; i<NUM_BARBEROS; ++i){
     switch(pids_barberos[i]=fork()){
       case 0: 
@@ -64,11 +69,21 @@ int main(int argc, char *argv[]){
       default:
         continue;
     }
+
+    for(i=0; i <NUM_CLIENTES; i++){
+      switch (pids_clientes[i]=fork()){
+      case 0:
+        execl("./cliente","./cliente",)
+        break;
+      
+      default:
+        break;
+      }
+    }
   }
-}
   
-/*
-  if (creasemaforos()!=0){
+
+  if (creaRecursos()!=0){
     fprintf(stderr,"Error en la creacion de los semaforos.");
     return EXIT_FAILURE;
   }
@@ -83,25 +98,47 @@ int main(int argc, char *argv[]){
 
 void ctrlc(int senial) {
     finalizarprocesos(); 
-    liberarsemaforos();
+    liberaRecursos();
     printf ("\nFin del programa (Ctrol + C).\n\n Todos los barberos han terminado su jornada. La barberia esta cerrada.\n"); 
     exit(EXIT_SUCCESS);
 }
 
-void liberarsemaforos(){
+
+int creaRecursos(){
+  //Crear todos los semaforos 
+  char[1024] barbero;
+  char[1024] butaca;
+  for(i=0; i < NUM_BARBEROS; i++){
+    sprintf(barbero,"barbero_[%d]",i);
+    crear_sem(barbero, 1);
+  }
+  for(i=0; i < NUM_BUTACAS; i++){
+    sprintf(butaca,"butaca_[%d]",i);
+    crear_sem(butaca,0);
+  }
+  crear_sem("Mutex_Caja",1)
+  crear_sem("Mutex_Puerta",1)
+  crear_sem("GenteDentro",20)
+
+  //Crear las variables
+
+  crear_var("Aforo_Actual",0)
+
+}
+
+//Destruir semaforos
+void liberaRecursos(){
   for(i= 0; i < NUM_BARBEROS; i++){
     destruir_sem(semBarberos[i]);
     printf("El barbero %d se marcha a casa.",i);
   }
+  for(i=0; i < NUM_BUTACAS; i++){
+    sprintf(butaca,"butaca_[%d]",i);
+    destruir_sem(butaca,0);
+  }
+
+  destruir_sem("Mutex_Caja");
+  destruir_sem("GenteDentro");
 
   destruir_var()
 }
-
-int creasemaforos(){
-  char[1024] barbero;
-  for(i=0; i < NUM_BARBEROS; i++){
-    fprintf(barbero,"barbero_[%d]",i);
-    crear_sem(barbero, 1);
-
-  }
-}*/
