@@ -42,7 +42,7 @@ pasar por linea de argumentos (al barbero), la velocidad del barbero
 
 void liberaRecursos(); 
 void finalizarprocesos();
-void creaRecursos();
+int creaRecursos();
 void ctrlc(int);
 
 int i;
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]){
       case 0: 
         sprintf(idBarb,"%d",i);
         execl("./barbero", "./barbero",idBarb,TIEMPO_CORTE_BASE, NULL);
-        fprintf(stderr,"No se esta ejecutando el execl\n");
+        fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
         return EXIT_FAILURE;
 
       case -1:
@@ -77,7 +77,8 @@ int main(int argc, char *argv[]){
     for(i=0; i <NUM_CLIENTES; i++){
       switch (pids_clientes[i]=fork()){
       case 0:
-        execl("./cliente","./cliente",AFORO_MAX,COSTE_CORTE,NULL)
+        execl("./cliente","./cliente",AFORO_MAX,COSTE_CORTE,NULL);
+        fprintf(stderr,"No se esta ejecutando el execl del cliente.\n");
         break;
       
       default:
@@ -110,14 +111,14 @@ void ctrlc(int senial) {
 
 int creaRecursos(){
   //Crear todos los semaforos 
-  char[1024] barbero;
-  char[1024] pago;
-  char[1024] fin;
+  char barbero[1024];
+  char pago[1024];
+  char fin[1024];
 
   for(i=0; i < NUM_BARBEROS; i++){
     sprintf(barbero,"Barbero_[%d]",i);
     sprintf(pago,"Pago[%d]",i);
-    sprintf(pago,"Fin[%d]",i);
+    sprintf(fin,"Fin[%d]",i);
   
     crear_sem(barbero, 0);
     crear_sem(pago,1);
@@ -132,26 +133,37 @@ int creaRecursos(){
 
   //Crear las variables
 
-  crear_var("Aforo_Actual",0)
+  crear_var("Aforo_Actual",0);
 
+  return 0;
 
 }
 
 //Destruir semaforos
 void liberaRecursos(){
+
+  char barbero[1024];
+  char pago[1024];
+  char fin[1024];
+
+
   for(i= 0; i < NUM_BARBEROS; i++){
-    destruir_sem(semBarberos[i]);
-    printf("El barbero %d se marcha a casa.",i);
+    sprintf(barbero,"Barbero_[%d]",i);
+    sprintf(pago,"Pago[%d]",i);
+    sprintf(fin,"Fin[%d]",i);
+  
+    destruir_sem(barbero);
+    destruir_sem(pago);
+    destruir_sem(fin);
+
+  printf("El barbero %d se marcha a casa.", i);
+
   }
-  for(i=0; i < NUM_SILLONES; i++){
-    sprintf(butaca,"butaca_[%d]",i);
-    destruir_sem(butaca,0);
-  }
+
 
   destruir_sem("Mutex_Caja");
   destruir_sem("GenteDentro");
 
-  destruir_var()
 
   //matar clientes y matar barberos
 }
