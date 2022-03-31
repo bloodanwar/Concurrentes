@@ -6,7 +6,7 @@
 int crear_var(const char *name, int valor);
 
 // Obtiene el descriptor asociado a la variable.
-int obtener_var(const char *name);
+int (const char *name);
 
 // Destruye el objeto de memoria compartida.
 void destruir_var(const char *name);
