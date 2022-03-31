@@ -15,9 +15,9 @@ int coste_corte;
 
 char barberoAsignado;
 char fin;
-
+void ctrlc(int senial);
 int main(int argc, char *argv[]){
-
+   srand((int)getpid());
     sprintf(barberoAsignado, "Barbero_[%d]", atoi(argv[1]));
     sprintf(fin, "Fin_[%d]", atoi(argv[1]));
 
@@ -100,4 +100,8 @@ int main(int argc, char *argv[]){
     printf("Soy el cliente %d", getpid());
 
     return EXIT_SUCCESS;
+}
+void ctrlc(int senial){
+    printf("[Barbero %d] Finalizado(SIGINT)\n", getpid);
+    exit(EXIT_SUCCESS);
 }
