@@ -63,7 +63,6 @@ int main(int argc, char *argv[]){
   for(i=0; i<NUM_BARBEROS; ++i){
     switch(pids_barberos[i]=fork()){
       case 0: 
-      printf("ADSfdghg");
         sprintf(idBarb,"%d",i);
         execl("./barbero", "./barbero",idBarb,TIEMPO_CORTE_BASE, NULL);
         fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
@@ -126,7 +125,10 @@ int creaRecursos(){
   
     crear_sem(barbero, 0);
     crear_sem(pago,1);
-    crear_sem(fin,1);
+    crear_sem(fin,0);
+
+    crear_var(pago,0);
+
   }
   crear_sem("Sillones",NUM_SILLONES);
   crear_sem("Sillas",NUM_SILLAS);
