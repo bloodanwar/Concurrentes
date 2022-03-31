@@ -155,3 +155,21 @@ void liberaRecursos(){
 
   //matar clientes y matar barberos
 }
+void finalizarprocesos () {
+ int i;
+ printf ("-------------- Terminando ------------- \n");
+ for (i = 0; i < NUM_CLIENTES; i++) {
+  if (pids_clientes[i]) {
+   printf ("Finalizando proceso [ %d]... ", pids_clientes[i]);
+    kill(pids_clientes[i], SIGINT);
+   printf ("<Ok>\n");
+    }
+ }
+ for (i = 0; i < NUM_BARBEROS; i++) {
+  if (pids_barberos[i]) {
+   printf ("Finalizando proceso [ %d]... ", pids_barberos[i]);
+    kill(pids_barberos[i], SIGINT);
+   printf ("<Ok>\n");
+    }
+  }
+ }
