@@ -66,7 +66,7 @@ int main(int argc, char *argv[]){
       printf("ADSfdghg");
         sprintf(idBarb,"%d",i);
         execl("./barbero", "./barbero",idBarb,TIEMPO_CORTE_BASE, NULL);
-        fprintf(stderr,"No se esta ejecutando el execl\n");
+        fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
         return EXIT_FAILURE;
 
       case -1:
@@ -159,6 +159,7 @@ void liberaRecursos(){
 
     printf("El barbero %d se marcha a casa.",i);
   }
+
 
   destruir_sem("Mutex_Caja");
   destruir_sem("GenteDentro");
