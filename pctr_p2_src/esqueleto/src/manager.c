@@ -10,7 +10,7 @@
 #include <memoriaI.h>
 
 
-#define NUM_CLIENTES 100
+#define NUM_CLIENTES 20
 #define NUM_BARBEROS 3
 #define NUM_SILLONES 3
 #define NUM_SILLAS 10
@@ -48,6 +48,7 @@ void ctrlc(int);
 
 int barberoAsignado;
 int i;
+int j;
 char idBarb[1024];
 char aforoMaximo[1024]=AFORO_MAX;
 char asignadoBarbero [1024];
@@ -55,40 +56,51 @@ pid_t pids_clientes[NUM_CLIENTES];
 pid_t pids_barberos[NUM_BARBEROS];  
 
 int main(int argc, char *argv[]){
-
   srand(((int)getpid()));
 
   //Ejecucion de todos los procesos barberos.
 
   for(i=0; i<NUM_BARBEROS; ++i){
     switch(pids_barberos[i]=fork()){
+        case -1:
+        fprintf(stderr,"Error en la creacion del barbero.\n");
+        return EXIT_FAILURE;
+      break;
+
       case 0: 
         sprintf(idBarb,"%d",i);
-        execl("./barbero", "./barbero",idBarb,TIEMPO_CORTE_BASE, NULL);
+        execl("./barbero", "./barbero",idBarb, NULL);
         fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
         return EXIT_FAILURE;
 
-      case -1:
-        fprintf(stderr,"Error en la creacion del barbero.\n");
-        return EXIT_FAILURE;
-      
       default:
-        continue;
+      break;
+        //continue;
     }
+  }
 
-    for(i=0; i <NUM_CLIENTES; i++){
-      switch (pids_clientes[i]=fork()){
+    for(j=0; j <NUM_CLIENTES; ++j){
+    //printf("44444444444444444444\n");
+      switch (pids_clientes[j]=fork()){
+         case -1:
+        fprintf(stderr,"Error en la creacion del cliente.\n");
+        return EXIT_FAILURE;
+        break;
+
       case 0:
         barberoAsignado=rand()%NUM_BARBEROS;
         sprintf(asignadoBarbero, "%d", barberoAsignado);
-        execl("./cliente","./cliente", asignadoBarbero, AFORO_MAX,COSTE_CORTE,NULL);
+         printf("6666666666666\n");
+        execl("./cliente","./cliente", asignadoBarbero, NULL);
+        fprintf(stderr,"No se esta ejecutando el execl del cliente. \n");
+         return EXIT_FAILURE;
         break;
-      
+    
       default:
         break;
       }
     }
-  }
+  
   
 
   if (creaRecursos()!=0){
