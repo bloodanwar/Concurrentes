@@ -7,6 +7,8 @@
 #include <unistd.h>
 
 
+#include <semaforoI.h>
+#include <memoriaI.h>
 
 
 
@@ -32,9 +34,12 @@
 
 */
 
-char[1024] barbero;
-char[1024] pago;
-char[1024] fin;
+char barbero[1024];
+char pago[1024];
+char fin[1024];
+
+int Aforo_Actual;
+
 void ctrlc(int senial);
 
 int main(int argc, char *argv[]){
@@ -43,28 +48,30 @@ int main(int argc, char *argv[]){
     // el barbero es el que tiene que hacer el deposito en la caja antes de dormirse.
 
     int velocidad_Base = atoi(argv[2]);
-    int mi_velocidad=(idbarbero+1)*velocidad_Base;
+    int mi_velocidad=(atoi(argv[1])+1)*velocidad_Base;
 
     sprintf(barbero,"Barbero_[%d]",atoi(argv[1]));
     sprintf(pago,"Pago[%d]",atoi(argv[1]));
-    sprintf(pago,"Fin[%d]",atoi(argv[1]));
+    sprintf(fin,"Fin[%d]",atoi(argv[1]));
 
 
     while(1){
         
+    printf("holi");
+
     wait_sem(get_sem(barbero));
 
-    printf("Soy el barbero %d y empiezo a cortar el pelo.\n",idbarbero);
+    printf("Soy %s y empiezo a cortar el pelo.\n",barbero);
     sleep(mi_velocidad); //Esto es "Cortar el pelo"
-    printf("Soy el barbero %d y he terminado de cortar el pelo. He tardado %d segundos\n",idbarbero,mi_velocidad);
+    printf("Soy %s y he terminado de cortar el pelo. He tardado %d segundos\n",barbero,mi_velocidad);
 
     signal_sem(get_sem(fin));
 
-    wait_sem(get_sem(pago))
+    wait_sem(get_sem(pago));
 
     wait_sem(get_sem("Mutex_Caja"));
 
-    consultar_var(obtener_var("Aforo_Actual"));
+    consultar_var(obtener_var("Aforo_Actual"), &Aforo_Actual);
 
 }
     return EXIT_SUCCESS;
