@@ -21,6 +21,7 @@
 
 
 
+
 /*
   Hay N sillas (sala de espera) y M clientes de pie
   Los clientes que no quepan se van directamente.
@@ -42,13 +43,14 @@ pasar por linea de argumentos (al barbero), la velocidad del barbero
 
 void liberaRecursos(); 
 void finalizarprocesos();
-void creaRecursos();
+int creaRecursos();
 void ctrlc(int);
 
+int barberoAsignado;
 int i;
 char idBarb[1024];
 char aforoMaximo[1024]=AFORO_MAX;
-
+char asignadoBarbero [1024];
 pid_t pids_clientes[NUM_CLIENTES];
 pid_t pids_barberos[NUM_BARBEROS];  
 
@@ -61,6 +63,7 @@ int main(int argc, char *argv[]){
   for(i=0; i<NUM_BARBEROS; ++i){
     switch(pids_barberos[i]=fork()){
       case 0: 
+      printf("ADSfdghg");
         sprintf(idBarb,"%d",i);
         execl("./barbero", "./barbero",idBarb,TIEMPO_CORTE_BASE, NULL);
         fprintf(stderr,"No se esta ejecutando el execl\n");
@@ -77,7 +80,9 @@ int main(int argc, char *argv[]){
     for(i=0; i <NUM_CLIENTES; i++){
       switch (pids_clientes[i]=fork()){
       case 0:
-        execl("./cliente","./cliente",AFORO_MAX,COSTE_CORTE,NULL)
+        barberoAsignado=rand()%NUM_BARBEROS;
+        sprintf(asignadoBarbero, "%d", barberoAsignado);
+        execl("./cliente","./cliente", asignadoBarbero, AFORO_MAX,COSTE_CORTE,NULL);
         break;
       
       default:
@@ -110,14 +115,14 @@ void ctrlc(int senial) {
 
 int creaRecursos(){
   //Crear todos los semaforos 
-  char[1024] barbero;
-  char[1024] pago;
-  char[1024] fin;
+  char barbero [1024];
+  char pago [1024];
+  char fin [1024];
 
   for(i=0; i < NUM_BARBEROS; i++){
     sprintf(barbero,"Barbero_[%d]",i);
     sprintf(pago,"Pago[%d]",i);
-    sprintf(pago,"Fin[%d]",i);
+    sprintf(fin,"Fin[%d]",i);
   
     crear_sem(barbero, 0);
     crear_sem(pago,1);
@@ -132,26 +137,33 @@ int creaRecursos(){
 
   //Crear las variables
 
-  crear_var("Aforo_Actual",0)
-
+  crear_var("Aforo_Actual",0);
+  return 0;
 
 }
 
 //Destruir semaforos
 void liberaRecursos(){
+  char barbero [1024];
+  char pago [1024];
+  char fin [1024];
   for(i= 0; i < NUM_BARBEROS; i++){
-    destruir_sem(semBarberos[i]);
+    sprintf(barbero,"Barbero_[%d]",i);
+    sprintf(pago,"Pago[%d]",i);
+    sprintf(fin,"Fin[%d]",i);
+    
+
+    destruir_sem(barbero);
+    destruir_sem(pago);
+    destruir_sem(fin);
+
     printf("El barbero %d se marcha a casa.",i);
-  }
-  for(i=0; i < NUM_SILLONES; i++){
-    sprintf(butaca,"butaca_[%d]",i);
-    destruir_sem(butaca,0);
   }
 
   destruir_sem("Mutex_Caja");
   destruir_sem("GenteDentro");
 
-  destruir_var()
+  //destruir_var();
 
   //matar clientes y matar barberos
 }
