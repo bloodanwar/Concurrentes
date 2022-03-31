@@ -39,7 +39,6 @@ void ctrlc(int senial);
 
 int main(int argc, char *argv[]){
 
-    srand((int)getpid());
     // Uno de los argumentos a recibir al crear el barbero tiene que ser su velocidad.
     // el barbero es el que tiene que hacer el deposito en la caja antes de dormirse.
 
@@ -71,6 +70,6 @@ int main(int argc, char *argv[]){
     return EXIT_SUCCESS;
 }
 void ctrlc(int senial){
-    printf("[Barbero %d] Finalizado(SIGINT)\n", getpid);
+    printf("[Barbero %d] Finalizado(SIGINT)\n", getpid());
     exit(EXIT_SUCCESS);
 }

@@ -102,6 +102,6 @@ int main(int argc, char *argv[]){
     return EXIT_SUCCESS;
 }
 void ctrlc(int senial){
-    printf("[Barbero %d] Finalizado(SIGINT)\n", getpid);
+    printf("[Cliente %d] Finalizado(SIGINT)\n", getpid());
     exit(EXIT_SUCCESS);
 }
