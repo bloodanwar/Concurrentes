@@ -14,7 +14,7 @@
 #define NUM_BARBEROS 3
 #define NUM_SILLONES 3
 #define NUM_SILLAS 10
-#define COSTE_CORTE 10
+#define COSTE_CORTE "10"
 
 #define TIEMPO_CORTE_BASE "3" //Tiempo que se tarda en cortar el pelo. 
 #define AFORO_MAX "20"
@@ -52,42 +52,37 @@ int j;
 char idBarb[1024];
 char aforoMaximo[1024]=AFORO_MAX;
 char asignadoBarbero [1024];
-char coste_corte [1024];
 pid_t pids_clientes[NUM_CLIENTES];
 pid_t pids_barberos[NUM_BARBEROS];  
 
 char barbero [1024];
   char pago [1024];
   char fin [1024];
-  char Sillones [1024];
-  char Sillas [1024];
-  char Mutex_Caja [1024];
-  char Mutex_Puerta [1024];
+  char transaccion [1024];
 int creaRecursos(){
   //Crear todos los semaforos 
 
   for(i=0; i < NUM_BARBEROS; i++){
     sprintf(barbero,"Barbero_[%d]",i);
-    sprintf(pago,"Pago[%d]",i);
-    sprintf(fin,"Fin[%d]",i);
-  
+    sprintf(pago,"Pago_[%d]",i);
+    sprintf(fin,"Fin_[%d]",i);
+    sprintf(transaccion, "Transaccion_[%d]", i);
     crear_sem(barbero, 0);
     crear_sem(pago,1);
     crear_sem(fin,0);
-
-    crear_var(pago, COSTE_CORTE);
-
+    crear_var(transaccion, 0);
   }
-  crear_sem(Sillones,NUM_SILLONES);
-  crear_sem(Sillas,NUM_SILLAS);
-  
-  crear_sem(Mutex_Caja,1);
-  crear_sem(Mutex_Puerta,1);
-
+  crear_sem("Sillones",NUM_SILLONES);
+  crear_sem("Sillas",NUM_SILLAS);
+  crear_sem("Mutex_Caja", 1);
+  crear_sem("Mutex_Puerta", 1);
   //Crear las variables
 
   crear_var("Aforo_Actual",0);
   crear_var("Caja", 0);
+
+  
+
   return 0;
 
 }
@@ -108,7 +103,7 @@ if (creaRecursos()!=0){
 
       case 0:
         sprintf(asignadoBarbero, "%d", barberoAsignado);
-        execl("./cliente","./cliente", asignadoBarbero, barbero, pago, fin, Sillones, Sillas, Mutex_Puerta, NULL);
+        execl("./cliente","./cliente", asignadoBarbero, COSTE_CORTE, AFORO_MAX, NULL);
         fprintf(stderr,"No se esta ejecutando el execl del cliente. \n");
          return EXIT_FAILURE;
         break;
@@ -129,8 +124,7 @@ if (creaRecursos()!=0){
 
       case 0: 
         sprintf(idBarb,"%d",i);
-         sprintf(coste_corte,"%d", COSTE_CORTE);
-        execl("./barbero", "./barbero",idBarb, coste_corte, pago, fin, Mutex_Caja, NULL);
+        execl("./barbero", "./barbero",idBarb, COSTE_CORTE, NULL);
         fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
         return EXIT_FAILURE;
 
@@ -140,8 +134,6 @@ if (creaRecursos()!=0){
     }
   }
   
-  
-
   
 
   if (signal(SIGINT, ctrlc) == SIG_ERR) {

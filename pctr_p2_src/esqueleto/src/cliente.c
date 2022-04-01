@@ -11,7 +11,6 @@
 
 int Aforo_Actual;
 int Aforo_Max;
-int coste_corte;
 
 char barberoAsignado[1024];
 char fin [1024];
@@ -22,28 +21,28 @@ char Sillas [1024];
 char Mutex_Puerta [1024];
 
 int propina;
+char transaccion [1024];
+int transaccion1;
 int pago_final;
 
 void ctrlc(int senial);
 int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
-//printf("222222222\n");
     sprintf(barberoAsignado, "Barbero_[%d]", atoi(argv[1]));
-    sprintf(barbero, "barbero_[%d]", atoi(argv[2]));
-    sprintf(pago, "Pago_minimo_[%d]", atoi(argv[3]));
-    sprintf(fin, "Fin_[%d]", atoi(argv[4]));
-    sprintf(Sillones, "Sillones_[%d]", atoi(argv[5]));
-    sprintf(Sillas, "Sillas_[%d]", atoi(argv[6]));
-    sprintf(Mutex_Puerta, "Mutex_Puerta_[%d]", atoi(argv[7]));
+    sprintf(pago, "Pago_[%d]", atoi(argv[1]));
+    sprintf(fin, "Fin_[%d]", atoi(argv[1]));
+    sprintf(Mutex_Puerta, "Mutex_Puerta_[%d]", atoi(argv[1]));
+    sprintf(transaccion, "Transaccion_[%d]", atoi(argv[1]));
+    pago_final=atoi(argv[2]);
+    Aforo_Max = atoi(argv[3]);
 
-    Aforo_Max = atoi(argv[2]);
-    coste_corte = atoi(argv[3]);
 
     srand((int)getpid());
-
-
     wait_sem(get_sem("Mutex_Puerta"));
+    printf("222222222222222222222222222222222222\n");
     consultar_var(obtener_var("Aforo_Actual"), &Aforo_Actual);
+    printf("333333333333333333333333333333333333\n");
     consultar_var(obtener_var("pago_minimo"), &pago_final);
+    printf("44444444444444444444444444444444444444\n");
 
     if (Aforo_Actual >= Aforo_Max){ //No hay hueco en la peluqueria
         printf("Aforo actual está lleno, el cliente %d se va de la peluqueria.", getpid());
@@ -55,9 +54,9 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
         modificar_var(obtener_var("Aforo_Actual"), Aforo_Actual);
         signal_sem(get_sem("Mutex_Puerta"));
         signal_sem(get_sem("barbero"));
-        wait_sem(get_sem("Contador_Sillas"));//Se sienta una persona que estaba de pie en una silla
+        wait_sem(get_sem("Sillas"));//Se sienta una persona que estaba de pie en una silla
             wait_sem(get_sem("Sillones"));//Se pasa una persona de la silla al sillon
-                signal_sem(get_sem("Contador_Sillas"));//Se queda un hueco para sentarse.
+                signal_sem(get_sem("Sillas"));//Se queda un hueco para sentarse.
                 //Una vez se sienta en el sillon, el cliente espera a que termine su barbero y prepara el pago
                 
                 /*
@@ -68,7 +67,7 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
                 propina=rand()%6;
                 pago_final=pago_final+propina;
 
-                modificar_var(obtener_var("pago_minimo"), pago_final);    
+                modificar_var(obtener_var(transaccion), pago_final);    
                 signal_sem(get_sem(pago));
                 signal_sem(get_sem("Sillones"));
 
