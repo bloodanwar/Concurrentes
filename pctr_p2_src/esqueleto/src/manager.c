@@ -92,6 +92,7 @@ int main(int argc, char *argv[]){
   srand(((int)getpid()));
 
   for(j=0; j <NUM_CLIENTES; ++j){
+    barberoAsignado=rand()%NUM_BARBEROS;
       switch (pids_clientes[j]=fork()){
          case -1:
         fprintf(stderr,"Error en la creacion del cliente.\n");
@@ -99,7 +100,6 @@ int main(int argc, char *argv[]){
         break;
 
       case 0:
-        barberoAsignado=rand()%NUM_BARBEROS;
         sprintf(asignadoBarbero, "%d", barberoAsignado);
         execl("./cliente","./cliente", asignadoBarbero, NULL);
         fprintf(stderr,"No se esta ejecutando el execl del cliente. \n");
