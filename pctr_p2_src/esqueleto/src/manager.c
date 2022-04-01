@@ -52,11 +52,32 @@ int j;
 char idBarb[1024];
 char aforoMaximo[1024]=AFORO_MAX;
 char asignadoBarbero [1024];
+char coste_corte [1024];
 pid_t pids_clientes[NUM_CLIENTES];
 pid_t pids_barberos[NUM_BARBEROS];  
 
 int main(int argc, char *argv[]){
   srand(((int)getpid()));
+
+  for(j=0; j <NUM_CLIENTES; ++j){
+      switch (pids_clientes[j]=fork()){
+         case -1:
+        fprintf(stderr,"Error en la creacion del cliente.\n");
+        return EXIT_FAILURE;
+        break;
+
+      case 0:
+        barberoAsignado=rand()%NUM_BARBEROS;
+        sprintf(asignadoBarbero, "%d", barberoAsignado);
+        execl("./cliente","./cliente", asignadoBarbero, NULL);
+        fprintf(stderr,"No se esta ejecutando el execl del cliente. \n");
+         return EXIT_FAILURE;
+        break;
+    
+      default:
+        break;
+      }
+    }
 
   //Ejecucion de todos los procesos barberos.
 
@@ -69,7 +90,8 @@ int main(int argc, char *argv[]){
 
       case 0: 
         sprintf(idBarb,"%d",i);
-        execl("./barbero", "./barbero",idBarb, NULL);
+         sprintf(coste_corte,"%d", COSTE_CORTE);
+        execl("./barbero", "./barbero",idBarb, coste_corte, NULL);
         fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
         return EXIT_FAILURE;
 
@@ -78,28 +100,6 @@ int main(int argc, char *argv[]){
         //continue;
     }
   }
-
-    for(j=0; j <NUM_CLIENTES; ++j){
-    //printf("44444444444444444444\n");
-      switch (pids_clientes[j]=fork()){
-         case -1:
-        fprintf(stderr,"Error en la creacion del cliente.\n");
-        return EXIT_FAILURE;
-        break;
-
-      case 0:
-        barberoAsignado=rand()%NUM_BARBEROS;
-        sprintf(asignadoBarbero, "%d", barberoAsignado);
-         printf("6666666666666\n");
-        execl("./cliente","./cliente", asignadoBarbero, NULL);
-        fprintf(stderr,"No se esta ejecutando el execl del cliente. \n");
-         return EXIT_FAILURE;
-        break;
-    
-      default:
-        break;
-      }
-    }
   
   
 
@@ -127,19 +127,19 @@ void ctrlc(int senial) {
 int creaRecursos(){
   //Crear todos los semaforos 
   char barbero [1024];
-  char pago [1024];
+  char pago_minimo [1024];
   char fin [1024];
 
   for(i=0; i < NUM_BARBEROS; i++){
     sprintf(barbero,"Barbero_[%d]",i);
-    sprintf(pago,"Pago[%d]",i);
+    sprintf(pago_minimo,"Pago[%d]",i);
     sprintf(fin,"Fin[%d]",i);
   
     crear_sem(barbero, 0);
-    crear_sem(pago,1);
+    crear_sem(pago_minimo,1);
     crear_sem(fin,0);
 
-    crear_var(pago,0);
+    crear_var(pago_minimo, COSTE_CORTE);
 
   }
   crear_sem("Sillones",NUM_SILLONES);
@@ -147,11 +147,11 @@ int creaRecursos(){
   
   crear_sem("Mutex_Caja",1);
   crear_sem("Mutex_Puerta",1);
-  
 
   //Crear las variables
 
   crear_var("Aforo_Actual",0);
+  crear_var("Caja", 0);
   return 0;
 
 }

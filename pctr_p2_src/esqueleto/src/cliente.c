@@ -12,17 +12,20 @@
 int Aforo_Actual;
 int Aforo_Max;
 int coste_corte;
+int barb;
 
 char barberoAsignado[1024];
 char fin [1024];
 char pago [1024];
+int propina;
+int pago_final;
 
 void ctrlc(int senial);
 int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
-
+printf("222222222\n");
     sprintf(barberoAsignado, "Barbero_[%d]", atoi(argv[1]));
-    sprintf(fin, "Fin_[%d]", atoi(argv[1]));
-    sprintf(pago,"Pago[%d]", atoi(argv[1]));
+   // sprintf(fin, "Fin_[%d]", atoi(argv[1]));
+    //sprintf(pago,"Pago[%d]", atoi(argv[1]));
 
     Aforo_Max = atoi(argv[2]);
     coste_corte = atoi(argv[3]);
@@ -32,6 +35,7 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
 
     wait_sem(get_sem("Mutex_Puerta"));
     consultar_var(obtener_var("Aforo_Actual"), &Aforo_Actual);
+    consultar_var(obtener_var("pago_minimo"), &pago_final);
 
     if (Aforo_Actual >= Aforo_Max){ //No hay hueco en la peluqueria
         printf("Aforo actual está lleno, el cliente %d se va de la peluqueria.", getpid());
@@ -42,7 +46,7 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
         Aforo_Actual++;
         modificar_var(obtener_var("Aforo_Actual"), Aforo_Actual);
         signal_sem(get_sem("Mutex_Puerta"));
-
+        signal_sem(get_sem("barbero"));
         wait_sem(get_sem("Contador_Sillas"));//Se sienta una persona que estaba de pie en una silla
             wait_sem(get_sem("Sillones"));//Se pasa una persona de la silla al sillon
                 signal_sem(get_sem("Contador_Sillas"));//Se queda un hueco para sentarse.
@@ -53,13 +57,16 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
                 */
 
                 wait_sem(get_sem(fin));
+                propina=rand()%6;
+                pago_final=pago_final+propina;
 
+                modificar_var(obtener_var("pago_minimo"), pago_final);    
                 signal_sem(get_sem(pago));
                 signal_sem(get_sem("Sillones"));
 
                 wait_sem(get_sem("Mutex_Puerta"));
                     consultar_var(obtener_var("Aforo_Actual"), &Aforo_Actual);
-                    modificar_var(obtener_var("Aforo_Actual",Aforo_Actual));
+                    modificar_var(obtener_var("Aforo_Actual"), Aforo_Actual);
                 signal_sem(get_sem("Mutex_Puerta"));
 
     }
