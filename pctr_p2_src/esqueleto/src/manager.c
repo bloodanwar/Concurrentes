@@ -56,6 +56,38 @@ char coste_corte [1024];
 pid_t pids_clientes[NUM_CLIENTES];
 pid_t pids_barberos[NUM_BARBEROS];  
 
+int creaRecursos(){
+  //Crear todos los semaforos 
+  char barbero [1024];
+  char pago_minimo [1024];
+  char fin [1024];
+
+  for(i=0; i < NUM_BARBEROS; i++){
+    sprintf(barbero,"Barbero_[%d]",i);
+    sprintf(pago_minimo,"Pago[%d]",i);
+    sprintf(fin,"Fin[%d]",i);
+  
+    crear_sem(barbero, 0);
+    crear_sem(pago_minimo,1);
+    crear_sem(fin,0);
+
+    crear_var(pago_minimo, COSTE_CORTE);
+
+  }
+  crear_sem("Sillones",NUM_SILLONES);
+  crear_sem("Sillas",NUM_SILLAS);
+  
+  crear_sem("Mutex_Caja",1);
+  crear_sem("Mutex_Puerta",1);
+
+  //Crear las variables
+
+  crear_var("Aforo_Actual",0);
+  crear_var("Caja", 0);
+  return 0;
+
+}
+
 int main(int argc, char *argv[]){
   srand(((int)getpid()));
 
@@ -124,37 +156,7 @@ void ctrlc(int senial) {
 }
 
 
-int creaRecursos(){
-  //Crear todos los semaforos 
-  char barbero [1024];
-  char pago_minimo [1024];
-  char fin [1024];
 
-  for(i=0; i < NUM_BARBEROS; i++){
-    sprintf(barbero,"Barbero_[%d]",i);
-    sprintf(pago_minimo,"Pago[%d]",i);
-    sprintf(fin,"Fin[%d]",i);
-  
-    crear_sem(barbero, 0);
-    crear_sem(pago_minimo,1);
-    crear_sem(fin,0);
-
-    crear_var(pago_minimo, COSTE_CORTE);
-
-  }
-  crear_sem("Sillones",NUM_SILLONES);
-  crear_sem("Sillas",NUM_SILLAS);
-  
-  crear_sem("Mutex_Caja",1);
-  crear_sem("Mutex_Puerta",1);
-
-  //Crear las variables
-
-  crear_var("Aforo_Actual",0);
-  crear_var("Caja", 0);
-  return 0;
-
-}
 
 //Destruir semaforos
 void liberaRecursos(){
