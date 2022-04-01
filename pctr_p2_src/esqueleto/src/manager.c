@@ -56,29 +56,33 @@ char coste_corte [1024];
 pid_t pids_clientes[NUM_CLIENTES];
 pid_t pids_barberos[NUM_BARBEROS];  
 
+char barbero [1024];
+  char pago [1024];
+  char fin [1024];
+  char Sillones [1024];
+  char Sillas [1024];
+  char Mutex_Caja [1024];
+  char Mutex_Puerta [1024];
 int creaRecursos(){
   //Crear todos los semaforos 
-  char barbero [1024];
-  char pago_minimo [1024];
-  char fin [1024];
 
   for(i=0; i < NUM_BARBEROS; i++){
     sprintf(barbero,"Barbero_[%d]",i);
-    sprintf(pago_minimo,"Pago[%d]",i);
+    sprintf(pago,"Pago[%d]",i);
     sprintf(fin,"Fin[%d]",i);
   
     crear_sem(barbero, 0);
-    crear_sem(pago_minimo,1);
+    crear_sem(pago,1);
     crear_sem(fin,0);
 
-    crear_var(pago_minimo, COSTE_CORTE);
+    crear_var(pago, COSTE_CORTE);
 
   }
-  crear_sem("Sillones",NUM_SILLONES);
-  crear_sem("Sillas",NUM_SILLAS);
+  crear_sem(Sillones,NUM_SILLONES);
+  crear_sem(Sillas,NUM_SILLAS);
   
-  crear_sem("Mutex_Caja",1);
-  crear_sem("Mutex_Puerta",1);
+  crear_sem(Mutex_Caja,1);
+  crear_sem(Mutex_Puerta,1);
 
   //Crear las variables
 
@@ -90,7 +94,10 @@ int creaRecursos(){
 
 int main(int argc, char *argv[]){
   srand(((int)getpid()));
-
+if (creaRecursos()!=0){
+    fprintf(stderr,"Error en la creacion de los semaforos.");
+    return EXIT_FAILURE;
+  }
   for(j=0; j <NUM_CLIENTES; ++j){
     barberoAsignado=rand()%NUM_BARBEROS;
       switch (pids_clientes[j]=fork()){
@@ -101,7 +108,7 @@ int main(int argc, char *argv[]){
 
       case 0:
         sprintf(asignadoBarbero, "%d", barberoAsignado);
-        execl("./cliente","./cliente", asignadoBarbero, NULL);
+        execl("./cliente","./cliente", asignadoBarbero, barbero, pago, fin, Sillones, Sillas, Mutex_Puerta, NULL);
         fprintf(stderr,"No se esta ejecutando el execl del cliente. \n");
          return EXIT_FAILURE;
         break;
@@ -123,7 +130,7 @@ int main(int argc, char *argv[]){
       case 0: 
         sprintf(idBarb,"%d",i);
          sprintf(coste_corte,"%d", COSTE_CORTE);
-        execl("./barbero", "./barbero",idBarb, coste_corte, NULL);
+        execl("./barbero", "./barbero",idBarb, coste_corte, pago, fin, Mutex_Caja, NULL);
         fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
         return EXIT_FAILURE;
 
@@ -135,10 +142,7 @@ int main(int argc, char *argv[]){
   
   
 
-  if (creaRecursos()!=0){
-    fprintf(stderr,"Error en la creacion de los semaforos.");
-    return EXIT_FAILURE;
-  }
+  
 
   if (signal(SIGINT, ctrlc) == SIG_ERR) {
         fprintf(stderr, "Abrupt termination.\n"); 

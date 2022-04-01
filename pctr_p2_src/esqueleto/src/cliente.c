@@ -12,20 +12,28 @@
 int Aforo_Actual;
 int Aforo_Max;
 int coste_corte;
-int barb;
 
 char barberoAsignado[1024];
 char fin [1024];
 char pago [1024];
+char barbero [1024];
+char Sillones [1024];
+char Sillas [1024];
+char Mutex_Puerta [1024];
+
 int propina;
 int pago_final;
 
 void ctrlc(int senial);
 int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
-printf("222222222\n");
+//printf("222222222\n");
     sprintf(barberoAsignado, "Barbero_[%d]", atoi(argv[1]));
-   // sprintf(fin, "Fin_[%d]", atoi(argv[1]));
-    //sprintf(pago,"Pago[%d]", atoi(argv[1]));
+    sprintf(barbero, "barbero_[%d]", atoi(argv[2]));
+    sprintf(pago, "Pago_minimo_[%d]", atoi(argv[3]));
+    sprintf(fin, "Fin_[%d]", atoi(argv[4]));
+    sprintf(Sillones, "Sillones_[%d]", atoi(argv[5]));
+    sprintf(Sillas, "Sillas_[%d]", atoi(argv[6]));
+    sprintf(Mutex_Puerta, "Mutex_Puerta_[%d]", atoi(argv[7]));
 
     Aforo_Max = atoi(argv[2]);
     coste_corte = atoi(argv[3]);

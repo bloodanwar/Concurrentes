@@ -14,6 +14,8 @@
 char barbero [1024];
 char pago [1024];
 char fin [1024];
+char pago_minimo [1024];
+char Mutex_Caja [1024];
 
 int Caja;
 int propina;
@@ -24,7 +26,7 @@ int pago_base;
 void ctrlc(int senial);
 
 int main(int argc, char *argv[]){//idBarbero,VelocidadCorte,PagoBase
-printf("111111111\n");
+//printf("111111111\n");
     // Uno de los argumentos a recibir al crear el barbero tiene que ser su velocidad.
     // el barbero es el que tiene que hacer el deposito en la caja antes de dormirse.
 
@@ -32,8 +34,9 @@ printf("111111111\n");
     int mi_velocidad=(atoi((argv[1]))+1)*velocidad_Base;
 
     sprintf(barbero,"Barbero_[%d]",(atoi(argv[1])));
-   // sprintf(pago,"Pago[%d]",atoi(argv[1]));
-    //sprintf(fin,"Fin[%d]",atoi(argv[1]));    
+    sprintf(pago_minimo,"pago_minimo[%d]",atoi(argv[3]));  
+    sprintf(fin, "Fin_[%d]", atoi(argv[4])); 
+    sprintf(Mutex_Caja, "Mutex_Caja_[%d]", atoi(argv[5])); 
 
 
     while(1){
