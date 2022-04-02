@@ -18,7 +18,6 @@ char pago [1024];
 char barbero [1024];
 char Sillones [1024];
 char Sillas [1024];
-char Mutex_Puerta [1024];
 
 int propina;
 char transaccion [1024];
@@ -30,13 +29,18 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
     sprintf(barberoAsignado, "Barbero_[%d]", atoi(argv[1]));
     sprintf(pago, "Pago_[%d]", atoi(argv[1]));
     sprintf(fin, "Fin_[%d]", atoi(argv[1]));
-    sprintf(Mutex_Puerta, "Mutex_Puerta_[%d]", atoi(argv[1]));
     sprintf(transaccion, "Transaccion_[%d]", atoi(argv[1]));
+
+
     pago_final=atoi(argv[2]);
     Aforo_Max = atoi(argv[3]);
 
+    printf("Iniciado cliente %d con barbero asignado: %s\n", getpid(),barberoAsignado);
+
 
     srand((int)getpid());
+
+    
     wait_sem(get_sem("Mutex_Puerta"));
     printf("222222222222222222222222222222222222\n");
     consultar_var(obtener_var("Aforo_Actual"), &Aforo_Actual);

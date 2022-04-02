@@ -43,7 +43,7 @@ pasar por linea de argumentos (al barbero), la velocidad del barbero
 
 void liberaRecursos(); 
 void finalizarprocesos();
-int creaRecursos();
+void creaRecursos();
 void ctrlc(int);
 
 int barberoAsignado;
@@ -59,40 +59,20 @@ char barbero [1024];
   char pago [1024];
   char fin [1024];
   char transaccion [1024];
-int creaRecursos(){
-  //Crear todos los semaforos 
 
-  for(i=0; i < NUM_BARBEROS; i++){
-    sprintf(barbero,"Barbero_[%d]",i);
-    sprintf(pago,"Pago_[%d]",i);
-    sprintf(fin,"Fin_[%d]",i);
-    sprintf(transaccion, "Transaccion_[%d]", i);
-    crear_sem(barbero, 0);
-    crear_sem(pago,1);
-    crear_sem(fin,0);
-    crear_var(transaccion, 0);
-  }
-  crear_sem("Sillones",NUM_SILLONES);
-  crear_sem("Sillas",NUM_SILLAS);
-  crear_sem("Mutex_Caja", 1);
-  crear_sem("Mutex_Puerta", 1);
-  //Crear las variables
-
-  crear_var("Aforo_Actual",0);
-  crear_var("Caja", 0);
-
-  
-
-  return 0;
-
-}
 
 int main(int argc, char *argv[]){
+
   srand(((int)getpid()));
-if (creaRecursos()!=0){
-    fprintf(stderr,"Error en la creacion de los semaforos.");
-    return EXIT_FAILURE;
-  }
+
+  creaRecursos();
+
+
+  if (signal(SIGINT, ctrlc) == SIG_ERR) {
+        fprintf(stderr, "Abrupt termination.\n"); 
+        exit(EXIT_FAILURE);
+    }
+  
   for(j=0; j <NUM_CLIENTES; ++j){
     barberoAsignado=rand()%NUM_BARBEROS;
       switch (pids_clientes[j]=fork()){
@@ -103,7 +83,8 @@ if (creaRecursos()!=0){
 
       case 0:
         sprintf(asignadoBarbero, "%d", barberoAsignado);
-        execl("./cliente","./cliente", asignadoBarbero, COSTE_CORTE, AFORO_MAX, NULL);
+
+        execl("./exec/cliente","./exec/cliente", asignadoBarbero, COSTE_CORTE, AFORO_MAX, NULL);  //virginia, para que funcione como lo haces tu, cambia el ./ecec/cliente a ./cliente
         fprintf(stderr,"No se esta ejecutando el execl del cliente. \n");
          return EXIT_FAILURE;
         break;
@@ -114,17 +95,21 @@ if (creaRecursos()!=0){
     }
 
   //Ejecucion de todos los procesos barberos.
-
+  printf("porque aqui si\n");
   for(i=0; i<NUM_BARBEROS; ++i){
+
+    printf("aqui %d\n", i);
+
     switch(pids_barberos[i]=fork()){
-        case -1:
+      case -1:
         fprintf(stderr,"Error en la creacion del barbero.\n");
         return EXIT_FAILURE;
       break;
 
       case 0: 
+
         sprintf(idBarb,"%d",i);
-        execl("./barbero", "./barbero",idBarb, COSTE_CORTE, NULL);
+        execl("./exec/barbero", "./exec/barbero",idBarb, COSTE_CORTE, NULL); //virginia, para que funcione como lo haces tu, cambia el ./ecec/barbero a ./barbero
         fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
         return EXIT_FAILURE;
 
@@ -133,13 +118,14 @@ if (creaRecursos()!=0){
         //continue;
     }
   }
-  
-  
 
-  if (signal(SIGINT, ctrlc) == SIG_ERR) {
-        fprintf(stderr, "Abrupt termination.\n"); 
-        exit(EXIT_FAILURE);
-    }
+  
+    for (i = 0; i < NUM_BARBEROS; i++) 
+        waitpid(pids_barberos[i], 0, 0);
+    for (i = 0; i < NUM_CLIENTES; i++) 
+        waitpid(pids_clientes[i], 0, 0);
+    
+    liberaRecursos(); 
 
     return EXIT_SUCCESS;
 }
@@ -152,10 +138,48 @@ void ctrlc(int senial) {
 }
 
 
+  //Crear todos los semaforos y variables compartidas
+void creaRecursos(){
+
+  for(i=0; i < NUM_BARBEROS; i++){
+
+    sprintf(barbero,"Barbero_[%d]",i);
+    crear_sem(barbero, 1); //HE CAMBIADO ESTO A 1 Y PASA EL PRIMER BARBERO. NO SE PORQUE EL RESTO NO
+
+    sprintf(pago,"Pago_[%d]",i);
+    crear_sem(pago,1);    
+
+    sprintf(fin,"Fin_[%d]",i);
+    crear_sem(fin,0);
+
+    sprintf(transaccion, "Transaccion_[%d]", i);
+    crear_var(transaccion, 0);
+
+    
+    // printf("creado semaforo: %s\n",barbero);
+    // printf("creado semaforo: %s\n",pago);
+    // printf ("creado semaforo: %s\n",fin);
+    // printf ("creada variable: %s\n",transaccion);
+
+  }
+
+  crear_sem("Sillones",NUM_SILLONES);
+  crear_sem("Sillas",NUM_SILLAS);
+
+
+  crear_sem("Mutex_Caja", 1);
+  crear_sem("Mutex_Puerta", 1);
+
+  crear_var("Aforo_Actual",0);
+  crear_var("Caja", 0);
+
+}
 
 
 //Destruir semaforos
 void liberaRecursos(){
+
+  //TODO: HACER QUE ESTO FUNCIONE, CREO QUE NO ESTA FUNCIONANDO
   char barbero [1024];
   char pago [1024];
   char fin [1024];
@@ -177,24 +201,28 @@ void liberaRecursos(){
   destruir_sem("GenteDentro");
 
   //destruir_var();
-
-  //matar clientes y matar barberos
+ 
 }
+
+
+
+//matar clientes y matar barberos
+
 void finalizarprocesos () {
  int i;
  printf ("-------------- Terminando ------------- \n");
  for (i = 0; i < NUM_CLIENTES; i++) {
   if (pids_clientes[i]) {
-   printf ("Finalizando proceso [ %d]... ", pids_clientes[i]);
+   printf ("Finalizando proceso cliente [%d]... ", pids_clientes[i]);
     kill(pids_clientes[i], SIGINT);
-   printf ("<Ok>\n");
+   printf ("<Finalizado exitosamente>\n");
     }
  }
  for (i = 0; i < NUM_BARBEROS; i++) {
   if (pids_barberos[i]) {
-   printf ("Finalizando proceso [ %d]... ", pids_barberos[i]);
+   printf ("Finalizando proceso barbero [%d]... ", pids_barberos[i]);
     kill(pids_barberos[i], SIGINT);
-   printf ("<Ok>\n");
+   printf ("<Finalizado exitosamente>\n");
     }
   }
  }

@@ -27,11 +27,14 @@ void ctrlc(int senial);
 int main(int argc, char *argv[]){//idBarbero,VelocidadCorte,PagoBase
     // Uno de los argumentos a recibir al crear el barbero tiene que ser su velocidad.
     // el barbero es el que tiene que hacer el deposito en la caja antes de dormirse.
+    
+
+    
 
     int velocidad_Base = atoi(argv[2]);
     int mi_velocidad=(atoi((argv[1]))+1)*velocidad_Base;
 
-    sprintf(barbero,"Barbero_[%d]",(atoi(argv[1])));
+    sprintf(barbero,"Barbero_[%d]",(atoi(argv[1]))); 
     sprintf(transaccion,"Transaccion_[%d]",(atoi(argv[1])));  
     sprintf(fin, "Fin_[%d]", atoi(argv[1])); 
     sprintf(Mutex_Caja, "Mutex_Caja_[%d]", atoi(argv[1])); 
@@ -39,7 +42,11 @@ int main(int argc, char *argv[]){//idBarbero,VelocidadCorte,PagoBase
 
 
     while(1){
+    
     wait_sem(get_sem(barbero));
+    
+    printf("ha pasado el semaforo el barbero: %s \n",barbero);
+
     printf("11111111111111\n");
         printf("Soy el barbero %s y empiezo a cortar el pelo.\n",barbero);
         sleep(mi_velocidad); //Esto es "Cortar el pelo"
