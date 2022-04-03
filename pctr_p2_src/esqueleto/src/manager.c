@@ -18,8 +18,7 @@
 
 #define TIEMPO_CORTE_BASE "3" //Tiempo que se tarda en cortar el pelo. 
 #define AFORO_MAX "20"
-
-
+#define MUTEX_PUERTA "Mutex_Puerta"
 
 
 /*
@@ -59,6 +58,7 @@ char barbero [1024];
   char pago [1024];
   char fin [1024];
   char transaccion [1024];
+  char Mutex_Puerta [1024];
 
 
 int main(int argc, char *argv[]){
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]){
       case 0:
         sprintf(asignadoBarbero, "%d", barberoAsignado);
 
-        execl("./exec/cliente","./exec/cliente", asignadoBarbero, COSTE_CORTE, AFORO_MAX, NULL);  //virginia, para que funcione como lo haces tu, cambia el ./ecec/cliente a ./cliente
+        execl("./exec/cliente","./exec/cliente", asignadoBarbero, COSTE_CORTE, AFORO_MAX, MUTEX_PUERTA, NULL);  //virginia, para que funcione como lo haces tu, cambia el ./ecec/cliente a ./cliente
         fprintf(stderr,"No se esta ejecutando el execl del cliente. \n");
          return EXIT_FAILURE;
         break;
@@ -144,7 +144,11 @@ void creaRecursos(){
   for(i=0; i < NUM_BARBEROS; i++){
 
     sprintf(barbero,"Barbero_[%d]",i);
-    crear_sem(barbero, 1); //HE CAMBIADO ESTO A 1 Y PASA EL PRIMER BARBERO. NO SE PORQUE EL RESTO NO
+    crear_sem(barbero, 0); //HE CAMBIADO ESTO A 1 Y PASA EL PRIMER BARBERO. NO SE PORQUE EL RESTO NO
+    //!!!!!!!!!!!!!!!! EL RESTO DE BARBEROS NO PASAN PORQUE EL PRIMER BARBERO DEJA NEL SEMÁFORO EN 0 Y EL SIGNAL ESTÁ EN CLIENTES
+    //COMO EL SIGNAL ESTÁ EN CLIENTES Y POR AHÍ NO ENTRA, SOLO ENTRA EL PRIMER BARBERO. Además, lo de la propina solo me sale la primera vez que lo ejecuto
+    //como no entra en cliente, el cliente no paga y por eso la propina sale negativa y que los beneficios son 0
+    //he vuelto a dejar el semáforo de barbero en 0 porque es así como tiene que esta
 
     sprintf(pago,"Pago_[%d]",i);
     crear_sem(pago,1);    
@@ -168,7 +172,9 @@ void creaRecursos(){
 
 
   crear_sem("Mutex_Caja", 1);
-  crear_sem("Mutex_Puerta", 1);
+
+  sprintf(Mutex_Puerta, MUTEX_PUERTA);
+  crear_sem(Mutex_Puerta, 1);
 
   crear_var("Aforo_Actual",0);
   crear_var("Caja", 0);
