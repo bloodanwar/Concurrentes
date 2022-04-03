@@ -27,37 +27,30 @@ void ctrlc(int senial);
 int main(int argc, char *argv[]){//idBarbero,VelocidadCorte,PagoBase
     // Uno de los argumentos a recibir al crear el barbero tiene que ser su velocidad.
     // el barbero es el que tiene que hacer el deposito en la caja antes de dormirse.
-    
-
-    
 
     int velocidad_Base = atoi(argv[2]);
     int mi_velocidad=(atoi((argv[1]))+1)*velocidad_Base;
 
-    sprintf(barbero,"Barbero_[%d]",(atoi(argv[1]))); 
+    sprintf(barbero,"Barbero_[%d]",(atoi(argv[1])));
     sprintf(transaccion,"Transaccion_[%d]",(atoi(argv[1])));  
     sprintf(fin, "Fin_[%d]", atoi(argv[1])); 
     sprintf(Mutex_Caja, "Mutex_Caja_[%d]", atoi(argv[1])); 
     sprintf(pago, "Pago_[%d]", atoi(argv[1]));
 
+    
 
     while(1){
-    
     wait_sem(get_sem(barbero));
-    
-    printf("ha pasado el semaforo el barbero: %s \n",barbero);
-
     printf("11111111111111\n");
         printf("Soy el barbero %s y empiezo a cortar el pelo.\n",barbero);
         sleep(mi_velocidad); //Esto es "Cortar el pelo"
         printf("Soy el barbero %s y he terminado de cortar el pelo. He tardado %d segundos\n",barbero,mi_velocidad);
 
         signal_sem(get_sem(fin));
-
+    printf("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww\n");
             wait_sem(get_sem(pago));
                 consultar_var(obtener_var(transaccion), &pago_final);
                 pago_base=atoi(argv[2]);
-
                 propina=pago_final-pago_base;
                 printf("El pago final es: %d\n", pago_final);
                 printf("La propina es: %d\n", propina);
