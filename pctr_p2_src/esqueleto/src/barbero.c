@@ -34,7 +34,6 @@ int main(int argc, char *argv[]){//idBarbero,VelocidadCorte,PagoBase
     sprintf(barbero,"Barbero_[%d]",(atoi(argv[1])));
     sprintf(transaccion,"Transaccion_[%d]",(atoi(argv[1])));  
     sprintf(fin, "Fin_[%d]", atoi(argv[1])); 
-    sprintf(Mutex_Caja, "Mutex_Caja_[%d]", atoi(argv[1])); 
     sprintf(pago, "Pago_[%d]", atoi(argv[1]));
 
     
@@ -47,7 +46,7 @@ int main(int argc, char *argv[]){//idBarbero,VelocidadCorte,PagoBase
         printf("Soy el barbero %s y he terminado de cortar el pelo. He tardado %d segundos\n",barbero,mi_velocidad);
 
         signal_sem(get_sem(fin));
-    printf("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww\n");
+   // printf("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww\n");
             wait_sem(get_sem(pago));
                 consultar_var(obtener_var(transaccion), &pago_final);
                 pago_base=atoi(argv[2]);
