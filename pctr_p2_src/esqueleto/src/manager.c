@@ -10,14 +10,14 @@
 #include <memoriaI.h>
 
 
-#define NUM_CLIENTES 20
+#define NUM_CLIENTES 100
 #define NUM_BARBEROS 3
 #define NUM_SILLONES 3
 #define NUM_SILLAS 10
 #define COSTE_CORTE "10"
 
-#define TIEMPO_CORTE_BASE "1" //Tiempo que se tarda en cortar el pelo. 
-#define AFORO_MAX "20"
+#define TIEMPO_CORTE_BASE "2" //Tiempo que se tarda en cortar el pelo. 
+#define AFORO_MAX "25"
 
 
 /*
@@ -83,7 +83,7 @@ int main(int argc, char *argv[]){
 
       case 0:
         sprintf(asignadoBarbero, "%d", barberoAsignado);
-
+        sleep(rand()%30); //Simula el tiempo que tardan en llegar los clientes a la barberia.
         execl("./exec/cliente","./exec/cliente", asignadoBarbero, COSTE_CORTE, AFORO_MAX, NULL);  //virginia, para que funcione como lo haces tu, cambia el ./ecec/cliente a ./cliente
         fprintf(stderr,"No se esta ejecutando el execl del cliente. \n");
          return EXIT_FAILURE;
