@@ -18,7 +18,6 @@ char pago [1024];
 char barbero [1024];
 char Sillones [1024];
 char Sillas [1024];
-char Mutex_Puerta [1024];
 
 int propina;
 char transaccion [1024];
@@ -27,13 +26,11 @@ int pago_final;
 
 void ctrlc(int senial);
 int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
+
     sprintf(barberoAsignado, "Barbero_[%d]", atoi(argv[1]));
     sprintf(pago, "Pago_[%d]", atoi(argv[1]));
     sprintf(fin, "Fin_[%d]", atoi(argv[1]));
     sprintf(transaccion, "Transaccion_[%d]", atoi(argv[1]));
-    sprintf(Mutex_Puerta, argv[4]);
-
-    //sem_t *Mutex_Puerta=(get_sem(argv[4]));
 
     pago_final=atoi(argv[2]);
     Aforo_Max = atoi(argv[3]);
@@ -41,13 +38,13 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
     printf("Iniciado cliente %d con barbero asignado: %s\n", getpid(),barberoAsignado);
 
 
-    srand((int)getpid());
+    wait_sem(get_sem("mutex_puerta"));
 
-    
-    wait_sem(get_sem(Mutex_Puerta));
-    printf("222222222222222222222222222222222222\n");
+    printf("knok knock de %d\n", getpid());
     consultar_var(obtener_var("Aforo_Actual"), &Aforo_Actual);
-    printf("333333333333333333333333333333333333\n");
+    printf("Hay %d personas en la peluqueria\n",Aforo_Actual);
+
+
     consultar_var(obtener_var("pago_minimo"), &pago_final);
     printf("44444444444444444444444444444444444444\n");
 

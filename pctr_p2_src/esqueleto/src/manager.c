@@ -18,7 +18,6 @@
 
 #define TIEMPO_CORTE_BASE "3" //Tiempo que se tarda en cortar el pelo. 
 #define AFORO_MAX "20"
-#define MUTEX_PUERTA "Mutex_Puerta"
 
 
 /*
@@ -58,8 +57,6 @@ char barbero [1024];
   char pago [1024];
   char fin [1024];
   char transaccion [1024];
-  char Mutex_Puerta [1024];
-
 
 int main(int argc, char *argv[]){
 
@@ -84,7 +81,7 @@ int main(int argc, char *argv[]){
       case 0:
         sprintf(asignadoBarbero, "%d", barberoAsignado);
 
-        execl("./exec/cliente","./exec/cliente", asignadoBarbero, COSTE_CORTE, AFORO_MAX, MUTEX_PUERTA, NULL);  //virginia, para que funcione como lo haces tu, cambia el ./ecec/cliente a ./cliente
+        execl("./exec/cliente","./exec/cliente", asignadoBarbero, COSTE_CORTE, AFORO_MAX, NULL);  //virginia, para que funcione como lo haces tu, cambia el ./ecec/cliente a ./cliente
         fprintf(stderr,"No se esta ejecutando el execl del cliente. \n");
          return EXIT_FAILURE;
         break;
@@ -95,29 +92,29 @@ int main(int argc, char *argv[]){
     }
 
   //Ejecucion de todos los procesos barberos.
-  printf("porque aqui si\n");
-  for(i=0; i<NUM_BARBEROS; ++i){
+  // printf("porque aqui si\n");
+  // for(i=0; i<NUM_BARBEROS; ++i){
 
-    printf("aqui %d\n", i);
+  //   printf("aqui %d\n", i);
 
-    switch(pids_barberos[i]=fork()){
-      case -1:
-        fprintf(stderr,"Error en la creacion del barbero.\n");
-        return EXIT_FAILURE;
-      break;
+  //   switch(pids_barberos[i]=fork()){
+  //     case -1:
+  //       fprintf(stderr,"Error en la creacion del barbero.\n");
+  //       return EXIT_FAILURE;
+  //     break;
 
-      case 0: 
+  //     case 0: 
 
-        sprintf(idBarb,"%d",i);
-        execl("./exec/barbero", "./exec/barbero",idBarb, COSTE_CORTE, NULL); //virginia, para que funcione como lo haces tu, cambia el ./ecec/barbero a ./barbero
-        fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
-        return EXIT_FAILURE;
+  //       sprintf(idBarb,"%d",i);
+  //       execl("./exec/barbero", "./exec/barbero",idBarb, COSTE_CORTE, NULL); //virginia, para que funcione como lo haces tu, cambia el ./ecec/barbero a ./barbero
+  //       fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
+  //       return EXIT_FAILURE;
 
-      default:
-      break;
-        //continue;
-    }
-  }
+  //     default:
+  //     break;
+  //       //continue;
+  //   }
+
 
   
     for (i = 0; i < NUM_BARBEROS; i++) 
@@ -140,7 +137,7 @@ void ctrlc(int senial) {
 
   //Crear todos los semaforos y variables compartidas
 void creaRecursos(){
-
+  printf ("Inicializacion de recursos compartidos.\n");
   for(i=0; i < NUM_BARBEROS; i++){
 
     sprintf(barbero,"Barbero_[%d]",i);
@@ -168,13 +165,17 @@ void creaRecursos(){
   }
 
   crear_sem("Sillones",NUM_SILLONES);
+  printf("Se crea el semaforo Sillones con %d sillones disponibles\n",NUM_SILLONES);
   crear_sem("Sillas",NUM_SILLAS);
+  printf("Se crea el semaforo Sillas con %d sillas disponibles\n",NUM_SILLAS);
 
 
   crear_sem("Mutex_Caja", 1);
+  printf("Mutex_Caja creado \n");
 
-  sprintf(Mutex_Puerta, MUTEX_PUERTA);
-  crear_sem(Mutex_Puerta, 1);
+
+  crear_sem("mutex_puerta", 1);
+  printf ("Mutex_Puerta creado\n");
 
   crear_var("Aforo_Actual",0);
   crear_var("Caja", 0);
