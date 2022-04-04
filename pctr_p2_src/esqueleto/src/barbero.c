@@ -16,13 +16,14 @@ char fin [1024];
 char Mutex_Caja [1024];
 char transaccion [1024];
 char pago [1024];
+char propina [1024];
 
 int Caja;
-int propina;
+int propina_actual;
 int dinero;
 int pago_base;
 int pago_final;
-void ctrlc(int senial);
+int propina_acumulada;
 
 int main(int argc, char *argv[]){//idBarbero,PagoBase,VelocidadCorte
     // Uno de los argumentos a recibir al crear el barbero tiene que ser su velocidad.
@@ -36,6 +37,7 @@ int main(int argc, char *argv[]){//idBarbero,PagoBase,VelocidadCorte
     sprintf(transaccion,"Transaccion_[%d]",(atoi(argv[1])));  
     sprintf(fin, "Fin_[%d]", atoi(argv[1])); 
     sprintf(pago, "Pago_[%d]", atoi(argv[1]));
+    sprintf(propina,"Propina_[%d]",atoi(argv[1]));
 
     while(1){
     wait_sem(get_sem(barbero));
@@ -47,20 +49,16 @@ int main(int argc, char *argv[]){//idBarbero,PagoBase,VelocidadCorte
             wait_sem(get_sem(pago));
                 consultar_var(obtener_var(transaccion), &pago_final);
                 pago_base=atoi(argv[2]);
-                propina=pago_final-pago_base;
-                printf("El pago final es: %d\n", pago_final);
-                printf("La propina es: %d\n", propina);
+                propina_actual=pago_final-pago_base;
+                
+                consultar_var(obtener_var(propina),&propina_acumulada);
+                modificar_var(obtener_var(propina),propina_acumulada+propina_actual);
 
                 wait_sem(get_sem("Mutex_Caja"));
                     consultar_var(obtener_var("Caja"), &Caja);
-                    printf("Caja actual = %d\n",Caja);
                     modificar_var(obtener_var("Caja"), pago_base+Caja);
                 signal_sem(get_sem("Mutex_Caja"));
 
 }
     return EXIT_SUCCESS;
-}
-void ctrlc(int senial){
-    printf("[Barbero %d] Finalizado(SIGINT)\n", getpid());
-    exit(EXIT_SUCCESS);
 }

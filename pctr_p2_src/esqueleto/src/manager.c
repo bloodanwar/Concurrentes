@@ -57,6 +57,7 @@ char barbero [1024];
 char pago [1024];
 char fin [1024];
 char transaccion [1024];
+char propina [1024];
 
 int main(int argc, char *argv[]){
 
@@ -143,7 +144,7 @@ void creaRecursos(){
     sprintf(barbero,"Barbero_[%d]",i);
     crear_sem(barbero, 0); 
     sprintf(pago,"Pago_[%d]",i);
-    crear_sem(pago,1);    
+    crear_sem(pago,0);    
 
     sprintf(fin,"Fin_[%d]",i);
     crear_sem(fin,0);
@@ -151,22 +152,25 @@ void creaRecursos(){
     sprintf(transaccion, "Transaccion_[%d]", i);
     crear_var(transaccion, 0);
 
+    sprintf(propina,"Propina_[%d]",i);
+    crear_var(propina, 0);
+
     
-    printf("creado semaforo: %s\n",barbero);
-    printf("creado semaforo: %s\n",pago);
-    printf ("creado semaforo: %s\n",fin);
-    printf ("creada variable: %s\n",transaccion);
+    // printf("creado semaforo: %s\n",barbero);
+    // printf("creado semaforo: %s\n",pago);
+    // printf ("creado semaforo: %s\n",fin);
+    // printf ("creada variable: %s\n",transaccion);
 
   }
 
   crear_sem("Sillones",NUM_SILLONES);
-  printf("Se crea el semaforo Sillones con %d sillones disponibles\n",NUM_SILLONES);
+  // printf("Se crea el semaforo Sillones con %d sillones disponibles\n",NUM_SILLONES);
   crear_sem("Sillas",NUM_SILLAS);
-  printf("Se crea el semaforo Sillas con %d sillas disponibles\n",NUM_SILLAS);
+  // printf("Se crea el semaforo Sillas con %d sillas disponibles\n",NUM_SILLAS);
 
 
   crear_sem("Mutex_Caja", 1);
-  printf("Mutex_Caja creado \n");
+  // printf("Mutex_Caja creado \n");
 
 
   crear_sem("mutexPuerta", 1);
@@ -182,6 +186,7 @@ void creaRecursos(){
 //Destruir semaforos
 void liberaRecursos(){
   int recaudacion;
+  int propina_total;
   //TODO: HACER QUE ESTO FUNCIONE, CREO QUE NO ESTA FUNCIONANDO
 
   for(i= 0; i < NUM_BARBEROS; i++){
@@ -189,16 +194,18 @@ void liberaRecursos(){
     sprintf(pago,"Pago_[%d]",i);
     sprintf(fin,"Fin_[%d]",i);
     sprintf(transaccion,"Transaccion_[%d]",i);
-    
+    sprintf(propina,"Propina_[%d]",i);
 
     destruir_sem(barbero);
     destruir_sem(pago);
     destruir_sem(fin);
 
+    consultar_var(obtener_var(propina),&propina_total);
 
     destruir_var(transaccion);
+    destruir_var(propina);
 
-    printf("El barbero %d se marcha a casa.\n",i);
+    printf("El barbero %d se marcha a casa con una propina de %d\n",i,propina_total);
   }
 
   destruir_sem("Sillones");
@@ -214,7 +221,7 @@ void liberaRecursos(){
 
   destruir_var("Aforo_Actual");
 
-  printf ("Semaforos limpios\n");
+  printf ("\n\nSemaforos limpios\n");
 }
 
 
@@ -223,7 +230,7 @@ void liberaRecursos(){
 
 void finalizarprocesos () {
  int i;
- printf ("-------------- Terminando ------------- \n");
+ printf ("\n-------------- Terminando ------------- \n");
  for (i = 0; i < NUM_CLIENTES; i++) {
   if (pids_clientes[i]) {
    printf ("Finalizando proceso cliente [%d]... ", pids_clientes[i]);

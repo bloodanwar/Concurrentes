@@ -62,7 +62,6 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
                 propina=rand()%6;
                 pago_final=corte_base+propina;
 
-                printf("El cliente %d paga %d\n",getpid(),pago_final);
 
                 modificar_var(obtener_var(transaccion), pago_final);    
                 signal_sem(get_sem(pago));
@@ -75,8 +74,4 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
 
     }
     return EXIT_SUCCESS;
-}
-void ctrlc(int senial){
-    printf("[Cliente %d] Finalizado(SIGINT)\n", getpid());
-    exit(EXIT_SUCCESS);
 }
