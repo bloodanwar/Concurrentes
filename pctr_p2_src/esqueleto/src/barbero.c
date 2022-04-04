@@ -37,8 +37,6 @@ int main(int argc, char *argv[]){//idBarbero,PagoBase,VelocidadCorte
     sprintf(fin, "Fin_[%d]", atoi(argv[1])); 
     sprintf(pago, "Pago_[%d]", atoi(argv[1]));
 
-    printf("bbbbbbbbbbbbbbb %s",barbero);
-
     while(1){
     wait_sem(get_sem(barbero));
         printf("Soy el barbero %s y empiezo a cortar el pelo.\n",barbero);
@@ -55,6 +53,7 @@ int main(int argc, char *argv[]){//idBarbero,PagoBase,VelocidadCorte
 
                 wait_sem(get_sem("Mutex_Caja"));
                     consultar_var(obtener_var("Caja"), &Caja);
+                    printf("Caja actual = %d\n",Caja);
                     modificar_var(obtener_var("Caja"), pago_base+Caja);
                 signal_sem(get_sem("Mutex_Caja"));
 

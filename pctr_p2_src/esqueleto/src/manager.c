@@ -108,12 +108,13 @@ int main(int argc, char *argv[]){
         execl("./exec/barbero", "./exec/barbero",idBarb, COSTE_CORTE,TIEMPO_CORTE_BASE, NULL); //virginia, para que funcione como lo haces tu, cambia el ./ecec/barbero a ./barbero
         fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
         return EXIT_FAILURE;
+        break;
 
       default:
       break;
         //continue;
     }
-
+  }
     for (i = 0; i < NUM_BARBEROS; i++) 
         waitpid(pids_barberos[i], 0, 0);
     for (i = 0; i < NUM_CLIENTES; i++) 
@@ -122,7 +123,7 @@ int main(int argc, char *argv[]){
     liberaRecursos(); 
 
     return EXIT_SUCCESS;
-}
+
 }
 
 
