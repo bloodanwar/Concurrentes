@@ -16,7 +16,7 @@
 #define NUM_SILLAS 10
 #define COSTE_CORTE "10"
 
-#define TIEMPO_CORTE_BASE "3" //Tiempo que se tarda en cortar el pelo. 
+#define TIEMPO_CORTE_BASE "1" //Tiempo que se tarda en cortar el pelo. 
 #define AFORO_MAX "20"
 
 
@@ -54,9 +54,9 @@ pid_t pids_clientes[NUM_CLIENTES];
 pid_t pids_barberos[NUM_BARBEROS];  
 
 char barbero [1024];
-  char pago [1024];
-  char fin [1024];
-  char transaccion [1024];
+char pago [1024];
+char fin [1024];
+char transaccion [1024];
 
 int main(int argc, char *argv[]){
 
@@ -70,6 +70,8 @@ int main(int argc, char *argv[]){
         exit(EXIT_FAILURE);
     }
   
+  printf("-----------------------------------------\n--------Se abre la barberia--------\n");
+
   for(j=0; j <NUM_CLIENTES; ++j){
     barberoAsignado=rand()%NUM_BARBEROS;
       switch (pids_clientes[j]=fork()){
@@ -92,31 +94,26 @@ int main(int argc, char *argv[]){
     }
 
   //Ejecucion de todos los procesos barberos.
-  // printf("porque aqui si\n");
-  // for(i=0; i<NUM_BARBEROS; ++i){
+  for(i=0; i<NUM_BARBEROS; ++i){
 
-  //   printf("aqui %d\n", i);
+    switch(pids_barberos[i]=fork()){
+      case -1:
+        fprintf(stderr,"Error en la creacion del barbero.\n");
+        return EXIT_FAILURE;
+      break;
 
-  //   switch(pids_barberos[i]=fork()){
-  //     case -1:
-  //       fprintf(stderr,"Error en la creacion del barbero.\n");
-  //       return EXIT_FAILURE;
-  //     break;
+      case 0: 
 
-  //     case 0: 
+        sprintf(idBarb,"%d",i);
+        execl("./exec/barbero", "./exec/barbero",idBarb, COSTE_CORTE,TIEMPO_CORTE_BASE, NULL); //virginia, para que funcione como lo haces tu, cambia el ./ecec/barbero a ./barbero
+        fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
+        return EXIT_FAILURE;
 
-  //       sprintf(idBarb,"%d",i);
-  //       execl("./exec/barbero", "./exec/barbero",idBarb, COSTE_CORTE, NULL); //virginia, para que funcione como lo haces tu, cambia el ./ecec/barbero a ./barbero
-  //       fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
-  //       return EXIT_FAILURE;
+      default:
+      break;
+        //continue;
+    }
 
-  //     default:
-  //     break;
-  //       //continue;
-  //   }
-
-
-  
     for (i = 0; i < NUM_BARBEROS; i++) 
         waitpid(pids_barberos[i], 0, 0);
     for (i = 0; i < NUM_CLIENTES; i++) 
@@ -126,6 +123,8 @@ int main(int argc, char *argv[]){
 
     return EXIT_SUCCESS;
 }
+}
+
 
 void ctrlc(int senial) {
     finalizarprocesos(); 
@@ -141,12 +140,7 @@ void creaRecursos(){
   for(i=0; i < NUM_BARBEROS; i++){
 
     sprintf(barbero,"Barbero_[%d]",i);
-    crear_sem(barbero, 0); //HE CAMBIADO ESTO A 1 Y PASA EL PRIMER BARBERO. NO SE PORQUE EL RESTO NO
-    //!!!!!!!!!!!!!!!! EL RESTO DE BARBEROS NO PASAN PORQUE EL PRIMER BARBERO DEJA NEL SEMÁFORO EN 0 Y EL SIGNAL ESTÁ EN CLIENTES
-    //COMO EL SIGNAL ESTÁ EN CLIENTES Y POR AHÍ NO ENTRA, SOLO ENTRA EL PRIMER BARBERO. Además, lo de la propina solo me sale la primera vez que lo ejecuto
-    //como no entra en cliente, el cliente no paga y por eso la propina sale negativa y que los beneficios son 0
-    //he vuelto a dejar el semáforo de barbero en 0 porque es así como tiene que esta
-
+    crear_sem(barbero, 0); 
     sprintf(pago,"Pago_[%d]",i);
     crear_sem(pago,1);    
 
@@ -157,10 +151,10 @@ void creaRecursos(){
     crear_var(transaccion, 0);
 
     
-    // printf("creado semaforo: %s\n",barbero);
-    // printf("creado semaforo: %s\n",pago);
-    // printf ("creado semaforo: %s\n",fin);
-    // printf ("creada variable: %s\n",transaccion);
+    printf("creado semaforo: %s\n",barbero);
+    printf("creado semaforo: %s\n",pago);
+    printf ("creado semaforo: %s\n",fin);
+    printf ("creada variable: %s\n",transaccion);
 
   }
 
@@ -174,41 +168,52 @@ void creaRecursos(){
   printf("Mutex_Caja creado \n");
 
 
-  crear_sem("mutex_puerta", 1);
+  crear_sem("mutexPuerta", 1);
   printf ("Mutex_Puerta creado\n");
 
   crear_var("Aforo_Actual",0);
   crear_var("Caja", 0);
+  printf ("Caja registradora abierta\n");
 
 }
 
 
 //Destruir semaforos
 void liberaRecursos(){
-
+  int recaudacion;
   //TODO: HACER QUE ESTO FUNCIONE, CREO QUE NO ESTA FUNCIONANDO
-  char barbero [1024];
-  char pago [1024];
-  char fin [1024];
+
   for(i= 0; i < NUM_BARBEROS; i++){
     sprintf(barbero,"Barbero_[%d]",i);
-    sprintf(pago,"Pago[%d]",i);
-    sprintf(fin,"Fin[%d]",i);
+    sprintf(pago,"Pago_[%d]",i);
+    sprintf(fin,"Fin_[%d]",i);
+    sprintf(transaccion,"Transaccion_[%d]",i);
     
 
     destruir_sem(barbero);
     destruir_sem(pago);
     destruir_sem(fin);
 
-    printf("El barbero %d se marcha a casa.",i);
+
+    destruir_var(transaccion);
+
+    printf("El barbero %d se marcha a casa.\n",i);
   }
 
+  destruir_sem("Sillones");
+  destruir_sem("Sillas");
 
   destruir_sem("Mutex_Caja");
-  destruir_sem("GenteDentro");
+  destruir_sem("mutexPuerta");
 
-  //destruir_var();
- 
+
+  consultar_var(obtener_var("Caja"),&recaudacion);
+  printf ("La barberia ha sacado un beneficio de %d hoy\n",recaudacion);
+  destruir_var("Caja");
+
+  destruir_var("Aforo_Actual");
+
+  printf ("Semaforos limpios\n");
 }
 
 

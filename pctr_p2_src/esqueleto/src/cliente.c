@@ -38,47 +38,44 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
     printf("Iniciado cliente %d con barbero asignado: %s\n", getpid(),barberoAsignado);
 
 
-    wait_sem(get_sem("mutex_puerta"));
+    wait_sem(get_sem("mutexPuerta"));
 
     printf("knok knock de %d\n", getpid());
     consultar_var(obtener_var("Aforo_Actual"), &Aforo_Actual);
     printf("Hay %d personas en la peluqueria\n",Aforo_Actual);
 
 
-    consultar_var(obtener_var("pago_minimo"), &pago_final);
-    printf("44444444444444444444444444444444444444\n");
-
     if (Aforo_Actual >= Aforo_Max){ //No hay hueco en la peluqueria
-        printf("Aforo actual está lleno, el cliente %d se va de la peluqueria.", getpid());
-        signal_sem(get_sem("Mutex_Puerta"));
+        printf("Aforo actual está lleno, el cliente %d se va de la peluqueria.\n", getpid());
+        signal_sem(get_sem("mutexPuerta"));
         return EXIT_SUCCESS;
     }
     else{ //Hay hueco en la peluqueria
         Aforo_Actual++;
         modificar_var(obtener_var("Aforo_Actual"), Aforo_Actual);
-        signal_sem(get_sem("Mutex_Puerta"));
-        signal_sem(get_sem("barbero"));
+        signal_sem(get_sem("mutexPuerta"));
+        printf("aaaaaaaaaaaaaaaaaaaaa %s\n",barberoAsignado);
+        signal_sem(get_sem(barberoAsignado));
+
         wait_sem(get_sem("Sillas"));//Se sienta una persona que estaba de pie en una silla
             wait_sem(get_sem("Sillones"));//Se pasa una persona de la silla al sillon
                 signal_sem(get_sem("Sillas"));//Se queda un hueco para sentarse.
                 //Una vez se sienta en el sillon, el cliente espera a que termine su barbero y prepara el pago
                 
-                /*
-                    Pagobarbero[i] = coste_corte+rand()%coste_corte // esto establece el pago que se le va a hacer al barbero con la propina incluido.                
-                */
-
                 wait_sem(get_sem(fin));
                 propina=rand()%6;
                 pago_final=pago_final+propina;
+
+                printf("El cliente %d paga %d\n",getpid(),pago_final);
 
                 modificar_var(obtener_var(transaccion), pago_final);    
                 signal_sem(get_sem(pago));
                 signal_sem(get_sem("Sillones"));
 
-                wait_sem(get_sem("Mutex_Puerta"));
+                wait_sem(get_sem("mutexPuerta"));
                     consultar_var(obtener_var("Aforo_Actual"), &Aforo_Actual);
-                    modificar_var(obtener_var("Aforo_Actual"), Aforo_Actual);
-                signal_sem(get_sem("Mutex_Puerta"));
+                    modificar_var(obtener_var("Aforo_Actual"), Aforo_Actual--);
+                signal_sem(get_sem("mutexPuerta"));
 
     }
     return EXIT_SUCCESS;
