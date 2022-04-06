@@ -10,13 +10,13 @@
 #include <memoriaI.h>
 
 
-#define NUM_CLIENTES 100
+#define NUM_CLIENTES 20
 #define NUM_BARBEROS 3
 #define NUM_SILLONES 3
 #define NUM_SILLAS 10
 #define COSTE_CORTE "10"
 
-#define TIEMPO_CORTE_BASE "2" //Tiempo que se tarda en cortar el pelo. 
+#define TIEMPO_CORTE_BASE "1" //Tiempo que se tarda en cortar el pelo. 
 #define AFORO_MAX "25"
 
 
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]){
         exit(EXIT_FAILURE);
     }
   
-  printf("-----------------------------------------\n--------Se abre la barberia--------\n");
+  printf("\n------------------------------------------------------------\n\n<<<<<<<<<<<<< SE ABRE LA BARBERIA >>>>>>>>>>>>>\n\n");
 
   for(j=0; j <NUM_CLIENTES; ++j){
     barberoAsignado=rand()%NUM_BARBEROS;
@@ -116,11 +116,13 @@ int main(int argc, char *argv[]){
         //continue;
     }
   }
-    for (i = 0; i < NUM_BARBEROS; i++) 
-        waitpid(pids_barberos[i], 0, 0);
-    for (i = 0; i < NUM_CLIENTES; i++) 
+  
+    for (i = 0; i < NUM_CLIENTES; i++) {
         waitpid(pids_clientes[i], 0, 0);
-    
+    }
+
+    printf("\n------------------------------------------------------------\nTodos los clientes han sido atendidos.\n");
+
     liberaRecursos(); 
 
     return EXIT_SUCCESS;
@@ -138,7 +140,7 @@ void ctrlc(int senial) {
 
   //Crear todos los semaforos y variables compartidas
 void creaRecursos(){
-  printf ("Inicializacion de recursos compartidos.\n");
+  printf ("------------------------------------------------------------\nInicializacion de recursos compartidos.");
   for(i=0; i < NUM_BARBEROS; i++){
 
     sprintf(barbero,"Barbero_[%d]",i);
@@ -174,12 +176,14 @@ void creaRecursos(){
 
 
   crear_sem("mutexPuerta", 1);
-  printf ("Mutex_Puerta creado\n");
+  //printf ("Mutex_Puerta creado\n");
 
   crear_var("Aforo_Actual",0);
   crear_var("Caja", 0);
-  printf ("Caja registradora abierta\n");
+  //printf ("Caja registradora abierta\n");
 
+
+  printf ("<De forma exitosa>");
 }
 
 
@@ -187,7 +191,8 @@ void creaRecursos(){
 void liberaRecursos(){
   int recaudacion;
   int propina_total;
-  //TODO: HACER QUE ESTO FUNCIONE, CREO QUE NO ESTA FUNCIONANDO
+  
+  printf ("------------------------------------------------------------\n");
 
   for(i= 0; i < NUM_BARBEROS; i++){
     sprintf(barbero,"Barbero_[%d]",i);
@@ -205,7 +210,7 @@ void liberaRecursos(){
     destruir_var(transaccion);
     destruir_var(propina);
 
-    printf("El barbero %d se marcha a casa con una propina de %d\n",i,propina_total);
+    printf("El barbero %d se marcha a casa con una propina de %d Euros.\n",i,propina_total);
   }
 
   destruir_sem("Sillones");
@@ -216,12 +221,12 @@ void liberaRecursos(){
 
 
   consultar_var(obtener_var("Caja"),&recaudacion);
-  printf ("La barberia ha sacado un beneficio de %d hoy\n",recaudacion);
+  printf ("\nLa barberia ha sacado un beneficio de %d Euros hoy. \n",recaudacion);
   destruir_var("Caja");
 
   destruir_var("Aforo_Actual");
 
-  printf ("\n\nSemaforos limpios\n");
+  //printf ("\n\nSemaforos limpios\n");
 }
 
 
@@ -230,7 +235,7 @@ void liberaRecursos(){
 
 void finalizarprocesos () {
  int i;
- printf ("\n-------------- Terminando ------------- \n");
+ printf ("\n <<<<<<<<<<<<<< Terminando >>>>>>>>>>>>>>  \n");
  for (i = 0; i < NUM_CLIENTES; i++) {
   if (pids_clientes[i]) {
    printf ("Finalizando proceso cliente [%d]... ", pids_clientes[i]);

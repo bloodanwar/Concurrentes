@@ -41,9 +41,9 @@ int main(int argc, char *argv[]){//idBarbero,PagoBase,VelocidadCorte
 
     while(1){
     wait_sem(get_sem(barbero));
-        printf("Soy el barbero %s y empiezo a cortar el pelo.\n",barbero);
+        printf("%s empieza a cortar el pelo.\n",barbero);
         sleep(mi_velocidad); //Esto es "Cortar el pelo"
-        printf("Soy el barbero %s y he terminado de cortar el pelo. He tardado %d segundos\n",barbero,mi_velocidad);
+        printf("%s termina de cortar el pelo. Ha tardado %d segundos\n",barbero,mi_velocidad);
 
         signal_sem(get_sem(fin));
             wait_sem(get_sem(pago));
