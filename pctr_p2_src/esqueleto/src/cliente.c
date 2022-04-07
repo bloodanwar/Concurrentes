@@ -26,6 +26,7 @@ int pago_final;
 int corte_base;
 
 void ctrlc(int senial);
+
 int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
 
     sprintf(barberoAsignado, "Barbero_[%d]", atoi(argv[1]));
@@ -37,6 +38,13 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
     Aforo_Max = atoi(argv[3]);
 
     srand(((int)getpid()));
+
+    if (signal(SIGINT, ctrlc) == SIG_ERR) {
+        fprintf(stderr, "Abrupt termination.\n"); 
+        exit(EXIT_FAILURE);
+    }
+
+
 
     wait_sem(get_sem("mutexPuerta"));
     consultar_var(obtener_var("Aforo_Actual"), &Aforo_Actual);
@@ -74,4 +82,10 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
 
     }
     return EXIT_SUCCESS;
+}
+
+
+void ctrlc(int senial){
+    printf("Finalizando proceso cliente [%d]", getpid());
+    exit(EXIT_SUCCESS);
 }

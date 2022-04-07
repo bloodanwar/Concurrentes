@@ -25,6 +25,8 @@ int pago_base;
 int pago_final;
 int propina_acumulada;
 
+void ctrlc(int senial);
+
 int main(int argc, char *argv[]){//idBarbero,PagoBase,VelocidadCorte
     // Uno de los argumentos a recibir al crear el barbero tiene que ser su velocidad.
     // el barbero es el que tiene que hacer el deposito en la caja antes de dormirse.
@@ -38,6 +40,12 @@ int main(int argc, char *argv[]){//idBarbero,PagoBase,VelocidadCorte
     sprintf(fin, "Fin_[%d]", atoi(argv[1])); 
     sprintf(pago, "Pago_[%d]", atoi(argv[1]));
     sprintf(propina,"Propina_[%d]",atoi(argv[1]));
+
+
+    if (signal(SIGINT, ctrlc) == SIG_ERR) {
+        fprintf(stderr, "Abrupt termination.\n"); 
+        exit(EXIT_FAILURE);
+    }
 
     while(1){
     wait_sem(get_sem(barbero));
@@ -61,4 +69,9 @@ int main(int argc, char *argv[]){//idBarbero,PagoBase,VelocidadCorte
 
 }
     return EXIT_SUCCESS;
+}
+
+void ctrlc(int senial){
+    printf("Finalizando proceso barbero [%d]", getpid());
+    exit(EXIT_SUCCESS);
 }
