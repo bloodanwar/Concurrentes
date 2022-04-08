@@ -25,8 +25,6 @@ int transaccion1;
 int pago_final;
 int corte_base;
 
-// void handler(int senial);
-
 int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
 
     sprintf(barberoAsignado, "Barbero_[%d]", atoi(argv[1]));
@@ -38,12 +36,6 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
     Aforo_Max = atoi(argv[3]);
 
     srand(((int)getpid()));
-
-    // if (signal(SIGINT, handler) == SIG_ERR) {
-    //     fprintf(stderr, "Abrupt termination.\n"); 
-    //     exit(EXIT_FAILURE);
-    // }
-
 
 
     wait_sem(get_sem("mutexPuerta"));
@@ -83,9 +75,3 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
     }
     return EXIT_SUCCESS;
 }
-
-
-// void handler(int senial){
-//     printf("Finalizando proceso cliente [%d] <Finalizado correctamente>\n", getpid());
-//     exit(EXIT_SUCCESS);
-// }

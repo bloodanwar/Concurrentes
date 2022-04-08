@@ -19,26 +19,6 @@
 #define TIEMPO_CORTE_BASE "1" //Tiempo que se tarda en cortar el pelo. 
 #define AFORO_MAX "25"
 
-
-/*
-  Hay N sillas (sala de espera) y M clientes de pie
-  Los clientes que no quepan se van directamente.
-
-  Hay 3 sillones para cortar el pelo y 3 barberos para cortar el pelo.
-  Hay 3 velocidades de barbero.
-
-  Solo se puede sentar en un sillon un cliente que este en una silla.
-  -----------------------------------------------------------------------------------------
-  cuando matas al proceso padre, gestionar la eliminacion de los procesos hijos
-asignarle a un cliente, un barbero desde el principio
-pasar por linea de argumentos (al barbero), la velocidad del barbero
-
-*/
-
-
-
-
-
 void liberaRecursos(); 
 void finalizarprocesos();
 void creaRecursos();
@@ -87,7 +67,7 @@ int main(int argc, char *argv[]){
       case 0:
         sprintf(asignadoBarbero, "%d", barberoAsignado);
         sleep(rand()%30); //Simula el tiempo que tardan en llegar los clientes a la barberia.
-        execl("./exec/cliente","./exec/cliente", asignadoBarbero, COSTE_CORTE, AFORO_MAX, NULL);  //virginia, para que funcione como lo haces tu, cambia el ./ecec/cliente a ./cliente
+        execl("./exec/cliente","./exec/cliente", asignadoBarbero, COSTE_CORTE, AFORO_MAX, NULL); 
         fprintf(stderr,"No se esta ejecutando el execl del cliente. \n");
          return EXIT_FAILURE;
         break;
@@ -109,22 +89,19 @@ int main(int argc, char *argv[]){
       case 0: 
 
         sprintf(idBarb,"%d",i);
-        execl("./exec/barbero", "./exec/barbero",idBarb, COSTE_CORTE,TIEMPO_CORTE_BASE, NULL); //virginia, para que funcione como lo haces tu, cambia el ./ecec/barbero a ./barbero
+        execl("./exec/barbero", "./exec/barbero",idBarb, COSTE_CORTE,TIEMPO_CORTE_BASE, NULL); 
         fprintf(stderr,"No se esta ejecutando el execl del barbero. \n");
         return EXIT_FAILURE;
         break;
 
       default:
       break;
-        //continue;
     }
   }
   
     for (i = 0; i < NUM_CLIENTES; i++) waitpid(pids_clientes[i], 0, 0);
    printf("\n------------------------------------------------------------\nTodos los clientes han sido atendidos.\n");
-    //for (i = 0; i < NUM_BARBEROS; i++) waitpid(pids_barberos[i], 0, 0);
-
-    //finalizarprocesos();
+    
     liberaRecursos(); 
     for (i = 0; i < NUM_BARBEROS; i++) {
   if (pids_barberos[i]) {
@@ -170,28 +147,16 @@ void creaRecursos(){
     sprintf(propina,"Propina_[%d]",i);
     crear_var(propina, 0);
 
-    
-    // printf("creado semaforo: %s\n",barbero);
-    // printf("creado semaforo: %s\n",pago);
-    // printf ("creado semaforo: %s\n",fin);
-    // printf ("creada variable: %s\n",transaccion);
 
   }
 
   crear_sem("Sillones",NUM_SILLONES);
-  // printf("Se crea el semaforo Sillones con %d sillones disponibles\n",NUM_SILLONES);
   crear_sem("Sillas",NUM_SILLAS);
-  // printf("Se crea el semaforo Sillas con %d sillas disponibles\n",NUM_SILLAS);
-
   crear_sem("Mutex_Caja", 1);
-  // printf("Mutex_Caja creado \n");
-
   crear_sem("mutexPuerta", 1);
-  //printf ("Mutex_Puerta creado\n");
 
   crear_var("Aforo_Actual",0);
   crear_var("Caja", 0);
-  //printf ("Caja registradora abierta\n");
 
   printf ("<De forma exitosa>");
 }

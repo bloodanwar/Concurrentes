@@ -42,11 +42,6 @@ int main(int argc, char *argv[]){//idBarbero,PagoBase,VelocidadCorte
     sprintf(propina,"Propina_[%d]",atoi(argv[1]));
 
 
-    // if (signal(SIGINT, handler) == SIG_ERR) {
-    //     fprintf(stderr, "Abrupt termination.\n"); 
-    //     exit(EXIT_FAILURE);
-    // }
-
     while(1){
     wait_sem(get_sem(barbero));
         printf("%s empieza a cortar el pelo.\n",barbero);
@@ -70,9 +65,3 @@ int main(int argc, char *argv[]){//idBarbero,PagoBase,VelocidadCorte
 }
     return EXIT_SUCCESS;
 }
-
-// void handler(int senial){
-//     printf("Finalizando proceso barbero [%d] <Finalizado correctamente>\n" , getpid());
-
-//     exit(EXIT_SUCCESS);
-// }
