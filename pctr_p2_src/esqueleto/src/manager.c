@@ -42,7 +42,7 @@ pasar por linea de argumentos (al barbero), la velocidad del barbero
 void liberaRecursos(); 
 void finalizarprocesos();
 void creaRecursos();
-void ctrlc(int);
+void ctrlc(int senial);
 
 int barberoAsignado;
 int i;
@@ -62,6 +62,7 @@ char propina [1024];
 
 //Cuerpo de la ejecucion
 int main(int argc, char *argv[]){
+
 
   srand(((int)getpid()));
 
@@ -119,14 +120,20 @@ int main(int argc, char *argv[]){
     }
   }
   
-    for (i = 0; i < NUM_CLIENTES; i++) {
-        waitpid(pids_clientes[i], 0, 0);
-    }
+    for (i = 0; i < NUM_CLIENTES; i++) waitpid(pids_clientes[i], 0, 0);
+   printf("\n------------------------------------------------------------\nTodos los clientes han sido atendidos.\n");
+    //for (i = 0; i < NUM_BARBEROS; i++) waitpid(pids_barberos[i], 0, 0);
 
-    printf("\n------------------------------------------------------------\nTodos los clientes han sido atendidos.\n");
-
-    
+    //finalizarprocesos();
     liberaRecursos(); 
+    for (i = 0; i < NUM_BARBEROS; i++) {
+  if (pids_barberos[i]) {
+    printf ("Terminando proceso barbero [%d]", pids_barberos[i]);
+    kill(pids_barberos[i], SIGINT);  
+    printf ("<Terminacion Exitosa>\n");
+    
+    }
+  }
 
     return EXIT_SUCCESS;
 
@@ -135,14 +142,17 @@ int main(int argc, char *argv[]){
 //Signal handler para la interrupcion manual.
 void ctrlc(int senial) {
     printf ("\nFin del programa (Ctrol+C).\n");
-    liberaRecursos();
-    finalizarprocesos(); 
+   
+    finalizarprocesos();
+    liberaRecursos(); 
+    
     printf ("Todos los barberos han terminado su jornada. La barberia esta cerrada.\n"); 
     exit(EXIT_SUCCESS);
 }
 
 //Crear todos los semaforos y variables compartidas.
 void creaRecursos(){
+
   printf ("------------------------------------------------------------\nInicializacion de recursos compartidos.");
   for(i=0; i < NUM_BARBEROS; i++){
 
@@ -173,10 +183,8 @@ void creaRecursos(){
   crear_sem("Sillas",NUM_SILLAS);
   // printf("Se crea el semaforo Sillas con %d sillas disponibles\n",NUM_SILLAS);
 
-
   crear_sem("Mutex_Caja", 1);
   // printf("Mutex_Caja creado \n");
-
 
   crear_sem("mutexPuerta", 1);
   //printf ("Mutex_Puerta creado\n");
@@ -185,14 +193,14 @@ void creaRecursos(){
   crear_var("Caja", 0);
   //printf ("Caja registradora abierta\n");
 
-
   printf ("<De forma exitosa>");
 }
 
 //Destruir semaforos.
 void liberaRecursos(){
-  int recaudacion;
+  int recaudacion= 0;
   int propina_total;
+
   
   printf ("------------------------------------------------------------\n");
 
@@ -202,7 +210,7 @@ void liberaRecursos(){
     sprintf(fin,"Fin_[%d]",i);
     sprintf(transaccion,"Transaccion_[%d]",i);
     sprintf(propina,"Propina_[%d]",i);
-
+     
     destruir_sem(barbero);
     destruir_sem(pago);
     destruir_sem(fin);
@@ -214,13 +222,11 @@ void liberaRecursos(){
 
     printf("El barbero %d se marcha a casa con una propina de %d Euros.\n",i,propina_total);
   }
-
   destruir_sem("Sillones");
   destruir_sem("Sillas");
 
   destruir_sem("Mutex_Caja");
   destruir_sem("mutexPuerta");
-
 
   consultar_var(obtener_var("Caja"),&recaudacion);
   printf ("\nLa barberia ha sacado un beneficio de %d Euros hoy. \n",recaudacion);
@@ -228,25 +234,27 @@ void liberaRecursos(){
 
   destruir_var("Aforo_Actual");
 
-  //printf ("\n\nSemaforos limpios\n");
+  printf ("\n\nSemaforos limpios\n");
 }
 
-//matar procesos clientes y matar barberos.
+// matar procesos clientes y matar barberos.
 void finalizarprocesos () {
- int i;
+
  printf ("\n <<<<<<<<<<<<<< Terminando >>>>>>>>>>>>>>  \n");
+
  for (i = 0; i < NUM_CLIENTES; i++) {
   if (pids_clientes[i]) {
-   //printf ("Finalizando proceso cliente [%d]... ", pids_clientes[i]);
+    printf ("Terminando proceso cliente [%d]", pids_clientes[i]);
     kill(pids_clientes[i], SIGINT);
-   printf ("<Finalizado exitosamente>\n");
-    }
- }
- for (i = 0; i < NUM_BARBEROS; i++) {
-  if (pids_barberos[i]) {
-   //printf ("Finalizando proceso barbero [%d]... ", pids_barberos[i]);
-    kill(pids_barberos[i], SIGINT);
-   printf ("<Finalizado exitosamente>\n");
+    printf ("<Terminacion Exitosa>\n");
     }
   }
- }
+ for (i = 0; i < NUM_BARBEROS; i++) {
+  if (pids_barberos[i]) {
+    printf ("Terminando proceso barbero [%d]", pids_barberos[i]);
+    kill(pids_barberos[i], SIGINT);  
+    printf ("<Terminacion Exitosa>\n");
+    
+    }
+  }
+}

@@ -25,7 +25,7 @@ int transaccion1;
 int pago_final;
 int corte_base;
 
-void ctrlc(int senial);
+// void handler(int senial);
 
 int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
 
@@ -39,10 +39,10 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
 
     srand(((int)getpid()));
 
-    if (signal(SIGINT, ctrlc) == SIG_ERR) {
-        fprintf(stderr, "Abrupt termination.\n"); 
-        exit(EXIT_FAILURE);
-    }
+    // if (signal(SIGINT, handler) == SIG_ERR) {
+    //     fprintf(stderr, "Abrupt termination.\n"); 
+    //     exit(EXIT_FAILURE);
+    // }
 
 
 
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]){//idBarbero,CosteBase,AforoMaximo
 }
 
 
-void ctrlc(int senial){
-    printf("Finalizando proceso cliente [%d]", getpid());
-    exit(EXIT_SUCCESS);
-}
+// void handler(int senial){
+//     printf("Finalizando proceso cliente [%d] <Finalizado correctamente>\n", getpid());
+//     exit(EXIT_SUCCESS);
+// }
