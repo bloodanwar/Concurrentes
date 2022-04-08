@@ -66,7 +66,6 @@ int main(int argc, char *argv[]){
 
       case 0:
         sprintf(asignadoBarbero, "%d", barberoAsignado);
-        sleep(rand()%30); //Simula el tiempo que tardan en llegar los clientes a la barberia.
         execl("./exec/cliente","./exec/cliente", asignadoBarbero, COSTE_CORTE, AFORO_MAX, NULL); 
         fprintf(stderr,"No se esta ejecutando el execl del cliente. \n");
          return EXIT_FAILURE;
