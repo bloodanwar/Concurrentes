@@ -16,3 +16,12 @@
 #define MAX_RESOLUTORES 5
 
 #define NOMBRE_COLA_OPERACIONES "/OPERACIONES"
+#define NOMBRE_COLA_SUMA "/SUMA"
+#define NOMBRE_COLA_RESTA "/RESTA"
+#define NOMBRE_COLA_PRODUCTO "/PRODUCTO"
+#define NOMBRE_COLA_SUMATORIO "/SUMATORIO"
+
+struct operandos{
+int a;
+int b;
+};

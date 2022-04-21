@@ -7,6 +7,9 @@ int ParsearEnviar(char *argumento);
 void CreacionColas(void);
 
 mqd_t qHandler_operaciones;
+mqd_t qHandler_suma;
+mqd_t qHandler_resta;
+mqd_t qHandler_producto;
 
 pid_t vpids[MAX_RESOLUTORES + 1];
 pid_t pidSumatorio;
@@ -75,6 +78,14 @@ void CreacionColas()
 	mqAttr_operaciones.mq_maxmsg = MAX_BUFFER;
 	mqAttr_operaciones.mq_msgsize = sizeof(char);
 
+	struct mq_attr mqAttr_operandos;
+	mqAttr_operaciones.mq_maxmsg = MAX_BUFFER;
+	mqAttr_operaciones.mq_msgsize = sizeof(struct operandos);
+
+	struct mq_attr mqAttr_sumatorio;
+	mqAttr_operaciones.mq_maxmsg = MAX_BUFFER;
+	mqAttr_operaciones.mq_msgsize = sizeof(int);
+
 	qHandler_operaciones = mq_open(NOMBRE_COLA_OPERACIONES, O_RDWR | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr_operaciones);
 	
 	if (qHandler_operaciones == -1)
@@ -85,15 +96,10 @@ void CreacionColas()
 	//SE AÑADIRA EL CODIGO RELACIONADO CON LA CREACION DE TODAS LAS COLAS QUE SEAN NECESARIAS
 	mq_send(qHandler_operaciones, buffer, sizeof(MAX_BUFFER), 0);
 
-	////////buzon por operacion
-	////buzon operacion general. Los resolutores mandan los resultados de sus operaciones y el sumatorio lo reocge (hace recieve)
-	
-	
-	
-	//for(i=0, i<resolutor; i++){
-		//qHandler_operaciones[i] = mq_open(NOMBRE_COLA_OPERACIONES, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr);
-		//mq_send(qHandler_operaciones[i], buffer, sizeof(MAX_BUFFER), 1);
-	//}
+	qHandler_suma=mq_open(NOMBRE_COLA_SUMA, O_RDWR | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr_operandos);
+	qHandler_resta=mq_open(NOMBRE_COLA_RESTA, O_RDWR | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr_operandos);
+	qHandler_producto=mq_open(NOMBRE_COLA_PRODUCTO, O_RDWR | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr_operandos);
+	qHandler_sumatorio=mq_open(NOMBRE_COLA_SUMATORIO, O_RDWR | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr_sumatorio);
 	
 }
 
