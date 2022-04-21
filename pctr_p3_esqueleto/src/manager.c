@@ -9,6 +9,7 @@ void CreacionColas(void);
 mqd_t qHandler_operaciones;
 
 pid_t vpids[MAX_RESOLUTORES + 1];
+pid_t pidSumatorio;
 
 int main(int argc, char *argv[])
 {
@@ -46,37 +47,54 @@ int main(int argc, char *argv[])
 
 	/*AQUI HAY QUE LANZAR EL PROCESO SUMATORIO Y MANDARLE LOS ARGUMENTOS NECESARIOS EN SU CASO */
 
+	
+		if((pidSumatorio=fork())==0){
+			execl("./exec/sumatorio", "sumatorio",NULL);
+		}
+
 	/*EL PROCESO MANAGER QUEDA A LA ESPERA DE QUE EL PROCESO SUMATORIO LE INDIQUE QUE TODAS LAS OPERACIONES HAN SIDO REALIZADAS */
 
 	/*
 	//En espera de los procesos hijo	
 
-	for (; i>=resolutores+1; i--) waitpid(vpids[i], 0, 0);
-	FinalizarProcesos();
-	LiberaRecursos();*/
-
+	*/
+	for (i; i>=resolutores+1; i--) waitpid(vpids[i], 0, 0); //añadido el i que hay al principio
+		FinalizarProcesos();
+		LiberaRecursos();
 	//ESTE WHILE SE SUBSTITUIRA POR EL CODIGO QUE ESTA COMENTADO ANTERIORMENTE RELATIVO AL CONTROL DE SEÑALES. ASI NO SE TERMINARA OBLIGATORIAMENTE CON CTRL+C
-	while (1)
-		pause();
+	//while (1)
+	//	pause();
 
-	return 0;
+	//return 0;
+//}
 }
-
 void CreacionColas()
 {
+	int i;
 	struct mq_attr mqAttr_operaciones;
 	mqAttr_operaciones.mq_maxmsg = MAX_BUFFER;
 	mqAttr_operaciones.mq_msgsize = sizeof(char);
 
 	qHandler_operaciones = mq_open(NOMBRE_COLA_OPERACIONES, O_RDWR | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr_operaciones);
-
+	
 	if (qHandler_operaciones == -1)
 	{
 		fprintf(stderr, "%s\n", strerror(errno));
 		exit(EXIT_FAILURE);
 	}
-
 	//SE AÑADIRA EL CODIGO RELACIONADO CON LA CREACION DE TODAS LAS COLAS QUE SEAN NECESARIAS
+	mq_send(qHandler_operaciones, buffer, sizeof(MAX_BUFFER), 0);
+
+	////////buzon por operacion
+	////buzon operacion general. Los resolutores mandan los resultados de sus operaciones y el sumatorio lo reocge (hace recieve)
+	
+	
+	
+	//for(i=0, i<resolutor; i++){
+		//qHandler_operaciones[i] = mq_open(NOMBRE_COLA_OPERACIONES, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr);
+		//mq_send(qHandler_operaciones[i], buffer, sizeof(MAX_BUFFER), 1);
+	//}
+	
 }
 
 int ParsearEnviar(char *argumento)
@@ -114,13 +132,29 @@ void LiberaRecursos(void)
 {
 	//HABRA QUE AÑADIR TODAS LAS COLAS UTILIZADAS
 
+	int i;
+	char aux[30];
+	printf("Buzones librerándose... \n");
 	mq_close(qHandler_operaciones);
 	mq_unlink(NOMBRE_COLA_OPERACIONES);
+	for(i=0, i<MAX_RESOLUTORES; i++){
+		sprintf(aux, "%s %d", NOMBRE_COLA_OPERACIONES, i);
+		mq_close(qHandler_operaciones[i]);
+		mq_unlink(aux);
+	}
 }
 
 void FinalizarProcesos(void)
 {
-	//DEBERA AÑADIRSE TODO EL CODIGO ASOCIADO A LA FINALIZACION DE LOS PROCESOS HIJOS
+	int i;
+	printf("------------Programa finalizado------------------------\n");
+	for(i=0; i<MAX_RESOLUTORES; i++){
+		if(pids[i]){
+			printf("Finalizando proceso [%d]... ", pids[i]);
+			kill(pids[i], SIGINT);
+			printf("<Matado correctamente>\n");
+		}
+	}
 }
 
 void Controlador(int senhal)
